@@ -1,0 +1,6 @@
+# Makefile build output.
+out/*
+
+# Android NDK build output.
+/obj
+/libs
