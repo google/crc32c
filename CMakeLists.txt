@@ -1,0 +1,174 @@
+cmake_minimum_required(VERSION 3.1)
+project(CRC32C VERSION 0.1.0 LANGUAGES C CXX)
+
+# This project requires C++11.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# https://github.com/izenecloud/cmake/blob/master/SetCompilerWarningAll.cmake
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # Use the highest warning level for Visual Studio.
+  set(CMAKE_CXX_WARNING_LEVEL 4)
+  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  else(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+  endif(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+
+else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # use -Wall for clang and gcc
+  if(NOT CMAKE_CXX_FLAGS MATCHES "-Wall$")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wall$")
+
+  # use -Werror for clang and gcc
+  if(NOT CMAKE_CXX_FLAGS MATCHES "-Werror$")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Werror$")
+
+  # Disable C++ exceptions
+  string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+
+  # Disable RTTI
+  string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+option(CRC32C_BUILD_TESTS "Build CRC32C's unit tests" ON)
+option(CRC32C_BUILD_BENCHMARKS "Build BerryDB's benchmarks" ON)
+option(CRC32C_USE_GLOG "Build CRC32C's tests with Google Logging" ON)
+
+include(TestBigEndian)
+test_big_endian(BYTE_ORDER_BIG_ENDIAN)
+
+# Check for SSE4.2 support in the compiler.
+include(CheckCXXSourceCompiles)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} /arch:AVX")
+else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -msse4.2")
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+check_cxx_source_compiles("
+#if defined(_MSC_VER)
+#include <intrin.h>
+#else  // !defined(_MSC_VER)
+#include <cpuid.h>
+#include <nmmintrin.h>
+#endif  // defined(_MSC_VER)
+
+int main() {
+  return _mm_crc32_u8(0, 0) + _mm_crc32_u32(0, 0) + _mm_crc32_u64(0, 0);
+}
+"  HAVE_SSE42)
+
+if(CRC32C_USE_GLOG)
+  # glog's test targets trigger deprecation warnings, and compiling them burns
+  # CPU cycles on the CI.
+  set(BUILD_TESTING_SAVED "${BUILD_TESTING}")
+  set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+  add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/glog" EXCLUDE_FROM_ALL)
+  set(BUILD_TESTING "${BUILD_TESTING_SAVED}" CACHE BOOL "" FORCE)
+
+  # glog triggers deprecation warnings on OSX.
+  # https://github.com/google/glog/issues/185
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag(-Wdeprecated CRC32C_HAVE_NO_DEPRECATED)
+  if(CRC32C_HAVE_NO_DEPRECATED)
+    set_property(TARGET glog APPEND PROPERTY COMPILE_OPTIONS -Wno-deprecated)
+  endif(CRC32C_HAVE_NO_DEPRECATED)
+
+  # glog triggers sign comparison warnings on gcc.
+  check_cxx_compiler_flag(-Wdeprecated CRC32C_HAVE_NO_SIGN_COMPARE)
+  if(CRC32C_HAVE_NO_SIGN_COMPARE)
+    set_property(TARGET glog APPEND PROPERTY COMPILE_OPTIONS -Wno-sign-compare)
+  endif(CRC32C_HAVE_NO_SIGN_COMPARE)
+
+  set(CRC32C_TESTS_BUILT_WITH_GLOG 1)
+endif(CRC32C_USE_GLOG)
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/src/crc32c_config.h.in"
+  "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+)
+
+include_directories(
+  "${PROJECT_SOURCE_DIR}/include"
+  "${PROJECT_BINARY_DIR}/include"
+)
+
+add_library(crc32c "")
+target_sources(crc32c
+  PRIVATE
+    "${PROJECT_SOURCE_DIR}/src/crc32c_internal.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_portable.cc"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_read_le.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_check.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c.cc"
+    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+  PUBLIC
+    "${PROJECT_SOURCE_DIR}/include/crc32c/crc32c.h"
+)
+
+# SSE4.2 code is built separately, so we don't accidentally compile SSE4.2
+# instructions into code that gets run without SSE4.2 support.
+add_library(crc32c_sse42 "")
+target_sources(crc32c_sse42
+  PRIVATE
+    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.cc"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
+)
+if (HAVE_SSE42)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(crc32c_sse42 PRIVATE "/arch:AVX")
+  else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(crc32c_sse42 PRIVATE "-msse4.2")
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+endif(HAVE_SSE42)
+target_link_libraries(crc32c crc32c_sse42)
+
+if(CRC32C_BUILD_TESTS)
+  enable_testing()
+
+  # Prevent overriding the parent project's compiler/linker settings on Windows.
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+  # This project is tested using GoogleTest.
+  add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/googletest")
+
+  add_executable(crc32c_tests "")
+  target_sources(crc32c_tests
+    PRIVATE
+      "${PROJECT_SOURCE_DIR}/src/crc32c_extend_unittests.h"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_portable_unittest.cc"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_read_le_unittest.cc"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_unittest.cc"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_unittest.cc"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_test_main.cc"
+  )
+  target_link_libraries(crc32c_tests crc32c gtest)
+  if(CRC32C_USE_GLOG)
+    target_link_libraries(crc32c_tests glog)
+  endif(CRC32C_USE_GLOG)
+
+  add_test(NAME crc32c_tests COMMAND crc32c_tests)
+endif(CRC32C_BUILD_TESTS)
+
+if(CRC32C_BUILD_BENCHMARKS)
+  add_executable(crc32c_bench "")
+  target_sources(crc32c_bench
+    PRIVATE
+      "${PROJECT_SOURCE_DIR}/src/crc32c_benchmark.cc"
+  )
+  target_link_libraries(crc32c_bench crc32c)
+
+  # This project uses Google benchmark for benchmarking.
+  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+  set(BENCHMARK_ENABLE_EXCEPTIONS OFF CACHE BOOL "" FORCE)
+  add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/benchmark")
+  target_link_libraries(crc32c_bench benchmark)
+
+  if(CRC32C_USE_GLOG)
+    target_link_libraries(crc32c_bench glog)
+  endif(CRC32C_USE_GLOG)
+endif(CRC32C_BUILD_BENCHMARKS)

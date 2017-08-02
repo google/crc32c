@@ -1,6 +1,6 @@
-# Makefile build output.
-out/*
+# Editors.
+*.sw*
+.DS_Store
 
-# Android NDK build output.
-/obj
-/libs
+# Build directory.
+out/

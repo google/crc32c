@@ -1,0 +1,7 @@
+-Iinclude/
+-Ithird_party/benchmark/include/
+-Ithird_party/googletest/googletest/include/
+-Ithird_party/googletest/googlemock/include/
+-Iout/include/
+-Iout/third_party/glog/
+-std=c++11
