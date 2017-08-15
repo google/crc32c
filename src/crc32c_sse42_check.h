@@ -5,13 +5,14 @@
 #ifndef CRC32C_CRC32C_SSE42_CHECK_H_
 #define CRC32C_CRC32C_SSE42_CHECK_H_
 
-// X86-specific code.
+// X86-specific code checking the availability of SSE4.2 instructions.
+
+#include <cstddef>
+#include <cstdint>
 
 #include "crc32c/crc32c_config.h"
 
 #if defined(HAVE_SSE42)
-
-#include "crc32c/crc32c.h"
 
 // If the compiler supports SSE4.2, it definitely supports X86.
 

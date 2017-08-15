@@ -4,6 +4,11 @@
 
 #include "./crc32c_sse42.h"
 
+// In a separate source file to allow this accelerated CRC32C function to be
+// compiled with the appropriate compiler flags to enable SSE4.2 instructions.
+
+// This implementation is based on https://github.com/google/leveldb/pull/309.
+
 #include <cstddef>
 #include <cstdint>
 
@@ -40,10 +45,15 @@ std::uint32_t CRC32C_Extend_SSE42(
 } while (0)
 
   if (size > 16) {
-    // Process unaligned bytes.
-    for (unsigned int i = reinterpret_cast<std::uintptr_t>(p) % 8; i; --i) {
+    // Point x at first 8-byte aligned byte in the buffer.
+    const std::uintptr_t pval = reinterpret_cast<std::uintptr_t>(p);
+    const std::uint8_t* x =
+        reinterpret_cast<const std::uint8_t*>(((pval + 7) >> 3) << 3);
+    // Process bytes until p is 8-byte aligned
+    while (p != x) {
       STEP1;
     }
+
     // Process 8 bytes at a time.
     while (e - p >= 8) {
       STEP8;

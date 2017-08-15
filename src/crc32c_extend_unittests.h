@@ -114,6 +114,29 @@ TEST(TESTED_EXTEND_CASE_NAME, BufferSlicing) {
   }
 }
 
+TEST(TESTED_EXTEND_CASE_NAME, LargeBufferSlicing) {
+  std::uint8_t buffer[2048];
+  for (size_t i = 0; i < 2048; i++)
+    buffer[i] = static_cast<uint8_t>(3 * i * i + 7 * i + 11);
+
+  for (std::size_t i = 0; i < 2048; i++) {
+    for (std::size_t j = i + 1; j <= 2048; j++) {
+      std::uint32_t crc = 0;
+
+      if (i > 0) {
+        crc = TESTED_EXTEND(crc, buffer, i);
+      }
+      crc = TESTED_EXTEND(crc, buffer + i, j - i);
+      if (j < 2048) {
+        crc = TESTED_EXTEND(crc, buffer + j, 2048 - j);
+      }
+
+      EXPECT_EQ(static_cast<std::uint32_t>(0x36dcc753), crc);
+    }
+  }
+}
+
+
 #undef TESTED_EXTEND_CASE_NAME
 #undef TESTED_EXTEND_CASE_NAMER
 #undef TESTED_EXTEND_PASTER

@@ -293,8 +293,8 @@ std::uint32_t CRC32C_Extend_Portable(
         table0_[c >> 24];                       \
 } while (0)
 
-  // Point x at first 4-byte aligned byte in string.  This might be
-  // just past the end of the string.
+  // Point x at first 4-byte aligned byte in the buffer. This might be past the
+  // end of the buffer.
   const std::uintptr_t pval = reinterpret_cast<std::uintptr_t>(p);
   const std::uint8_t* x =
       reinterpret_cast<const std::uint8_t*>(((pval + 3) >> 2) << 2);

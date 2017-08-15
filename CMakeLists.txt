@@ -35,7 +35,7 @@ else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 option(CRC32C_BUILD_TESTS "Build CRC32C's unit tests" ON)
-option(CRC32C_BUILD_BENCHMARKS "Build BerryDB's benchmarks" ON)
+option(CRC32C_BUILD_BENCHMARKS "Build CRC32C's benchmarks" ON)
 option(CRC32C_USE_GLOG "Build CRC32C's tests with Google Logging" ON)
 
 include(TestBigEndian)
@@ -43,6 +43,7 @@ test_big_endian(BYTE_ORDER_BIG_ENDIAN)
 
 # Check for SSE4.2 support in the compiler.
 include(CheckCXXSourceCompiles)
+set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} /arch:AVX")
 else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -57,9 +58,31 @@ check_cxx_source_compiles("
 #endif  // defined(_MSC_VER)
 
 int main() {
-  return _mm_crc32_u8(0, 0) + _mm_crc32_u32(0, 0) + _mm_crc32_u64(0, 0);
+  _mm_crc32_u8(0, 0); _mm_crc32_u32(0, 0); _mm_crc32_u64(0, 0);
+  return 0;
 }
 "  HAVE_SSE42)
+set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
+
+# Check for AArch64 + Linux support in the compiler.
+set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # TODO(pwnall): Insert correct flag when VS gets ARM CRC32C support.
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} /arch:NOTYET")
+else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -march=armv8-a+crc+crypto")
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+check_cxx_source_compiles("
+#include <arm_acle.h>
+#include <arm_neon.h>
+#include <sys/auxv.h>
+
+int main() {
+  __crc32cd(0, 0); vmull_p64(0, 0); getauxval(AT_HWCAP);
+  return 0;
+}
+" HAVE_ARM_LINUX_CRC32C)
+set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
 
 if(CRC32C_USE_GLOG)
   # glog's test targets trigger deprecation warnings, and compiling them burns
@@ -96,36 +119,61 @@ include_directories(
   "${PROJECT_BINARY_DIR}/include"
 )
 
-add_library(crc32c "")
+# ARM CRC32C code is built separately, so we don't accidentally compile
+# unsupported instructions into code that gets run without ARM32 support.
+add_library(crc32c_arm_linux OBJECT "")
+target_sources(crc32c_arm_linux
+  PRIVATE
+    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.cc"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.h"
+)
+if(HAVE_ARM_LINUX_CRC32C)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # TODO(pwnall): Insert correct flag when VS gets ARM CRC32C support.
+    target_compile_options(crc32c_arm_linux PRIVATE "/arch:NOTYET")
+  else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(crc32c_arm_linux PRIVATE "-march=armv8-a+crc+crypto")
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+endif(HAVE_ARM_LINUX_CRC32C)
+
+# SSE4.2 code is built separately, so we don't accidentally compile unsupported
+# instructions into code that gets run without SSE4.2 support.
+add_library(crc32c_sse42 OBJECT "")
+target_sources(crc32c_sse42
+  PRIVATE
+    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.cc"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
+)
+if(HAVE_SSE42)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(crc32c_sse42 PRIVATE "/arch:NOTYET")
+  else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(crc32c_sse42 PRIVATE "-msse4.2")
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+endif(HAVE_SSE42)
+
+add_library(crc32c ""
+  # TODO(pwnall): Move the TARGET_OBJECTS generator expressions to the PRIVATE
+  # section of target_sources when cmake_minimum_required becomes 3.9 or above.
+  $<TARGET_OBJECTS:crc32c_arm_linux>
+  $<TARGET_OBJECTS:crc32c_sse42>
+)
 target_sources(crc32c
   PRIVATE
+    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux_check.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_internal.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_portable.cc"
     "${PROJECT_SOURCE_DIR}/src/crc32c_read_le.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_check.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c.cc"
-    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
   PUBLIC
     "${PROJECT_SOURCE_DIR}/include/crc32c/crc32c.h"
 )
-
-# SSE4.2 code is built separately, so we don't accidentally compile SSE4.2
-# instructions into code that gets run without SSE4.2 support.
-add_library(crc32c_sse42 "")
-target_sources(crc32c_sse42
-  PRIVATE
-    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.cc"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
-)
-if (HAVE_SSE42)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(crc32c_sse42 PRIVATE "/arch:AVX")
-  else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(crc32c_sse42 PRIVATE "-msse4.2")
-  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-endif(HAVE_SSE42)
-target_link_libraries(crc32c crc32c_sse42)
 
 if(CRC32C_BUILD_TESTS)
   enable_testing()
@@ -139,6 +187,8 @@ if(CRC32C_BUILD_TESTS)
   add_executable(crc32c_tests "")
   target_sources(crc32c_tests
     PRIVATE
+      "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_extend_unittests.h"
       "${PROJECT_SOURCE_DIR}/src/crc32c_portable_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_read_le_unittest.cc"
@@ -158,6 +208,7 @@ if(CRC32C_BUILD_BENCHMARKS)
   add_executable(crc32c_bench "")
   target_sources(crc32c_bench
     PRIVATE
+      "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
       "${PROJECT_SOURCE_DIR}/src/crc32c_benchmark.cc"
   )
   target_link_libraries(crc32c_bench crc32c)

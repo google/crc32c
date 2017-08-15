@@ -63,3 +63,36 @@ runs the tests.
 ```bash
 cmake .. && cmake --build . && ctest --output-on-failure
 ```
+
+
+### Android testing
+
+The following command builds the project against the Android NDK, which is
+useful for benchmarking against ARM processors.
+
+```bash
+cmake .. -DCMAKE_SYSTEM_NAME=Android \
+    -DCMAKE_ANDROID_NDK=$HOME/Library/Android/sdk/ndk-bundle \
+    -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
+    -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_BUILD_TYPE=Release \
+    -DRUN_HAVE_POSIX_REGEX=0 -DCRC32C_USE_GLOG=0 && \
+    cmake --build .
+```
+
+The following commands install and run the benchmarks.
+
+```bash
+adb push crc32c_bench /data/local/tmp
+adb shell chmod +x /data/local/tmp/crc32c_bench
+adb shell 'cd /data/local/tmp && ./crc32c_bench'
+adb shell rm /data/local/tmp/crc32c_bench
+```
+
+The following commands install and run the tests.
+
+```bash
+adb push crc32c_tests /data/local/tmp
+adb shell chmod +x /data/local/tmp/crc32c_tests
+adb shell 'cd /data/local/tmp && ./crc32c_tests'
+adb shell rm /data/local/tmp/crc32c_tests
+```
