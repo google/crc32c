@@ -45,11 +45,12 @@ std::uint32_t CRC32C_Extend_SSE42(
 } while (0)
 
   if (size > 16) {
-    // Point x at first 8-byte aligned byte in the buffer.
+    // Point x at first 8-byte aligned byte in the buffer. This must be inside
+    // the buffer, as long as the buffer is 8 bytes or larger.
     const std::uintptr_t pval = reinterpret_cast<std::uintptr_t>(p);
     const std::uint8_t* x =
         reinterpret_cast<const std::uint8_t*>(((pval + 7) >> 3) << 3);
-    // Process bytes until p is 8-byte aligned
+    // Process bytes until p is 8-byte aligned.
     while (p != x) {
       STEP1;
     }
