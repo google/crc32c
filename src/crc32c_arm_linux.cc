@@ -77,7 +77,7 @@ std::uint32_t CRC32C_Extend_ArmLinux(
     t2 = (std::uint64_t)vmull_p64(crc2, k2);
     t1 = (std::uint64_t)vmull_p64(crc1, k1);
     t0 = (std::uint64_t)vmull_p64(crc0, k0);
-    crc = __crc32cd(crc3, *(std::uint64_t *)p); weqwe
+    crc = __crc32cd(crc3, *(std::uint64_t *)p);
     p += sizeof(std::uint64_t);
     crc ^= __crc32cd(0, t2);
     crc ^= __crc32cd(0, t1);

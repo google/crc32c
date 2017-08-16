@@ -71,12 +71,10 @@ The following command builds the project against the Android NDK, which is
 useful for benchmarking against ARM processors.
 
 ```bash
-cmake .. -DCMAKE_SYSTEM_NAME=Android \
+cmake .. -DCMAKE_SYSTEM_NAME=Android -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
     -DCMAKE_ANDROID_NDK=$HOME/Library/Android/sdk/ndk-bundle \
-    -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
-    -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_BUILD_TYPE=Release \
-    -DRUN_HAVE_POSIX_REGEX=0 -DCRC32C_USE_GLOG=0 && \
-    cmake --build .
+    -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCRC32C_USE_GLOG=0 \
+    -DCMAKE_BUILD_TYPE=Release && cmake --build .
 ```
 
 The following commands install and run the benchmarks.
