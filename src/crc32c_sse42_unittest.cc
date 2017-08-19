@@ -6,7 +6,7 @@
 
 #if defined(HAVE_SSE42)
 
-#define TESTED_EXTEND CRC32C_Extend_SSE42
+#define TESTED_EXTEND ExtendSse42
 #include "./crc32c_extend_unittests.h"
 #undef TESTED_EXTEND
 

@@ -12,8 +12,12 @@
 
 #include "crc32c/crc32c.h"
 
-// Software implementation in crc32c_portable.cc
-std::uint32_t CRC32C_Extend_Portable(
+namespace crc32c {
+
+// Un-accelerated implementation that works on all CPUs.
+std::uint32_t ExtendPortable(
     std::uint32_t crc, const uint8_t* data, std::size_t count);
+
+}  // namespace crc32c
 
 #endif  // CRC32C_CRC32C_INTERNAL_H_

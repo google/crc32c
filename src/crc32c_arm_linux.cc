@@ -52,7 +52,9 @@
 	(P) += 4*SEGMENTBYTES; \
 	} while(0)
 
-std::uint32_t CRC32C_Extend_ArmLinux(
+namespace crc32c {
+
+std::uint32_t ExtendArmLinux(
     std::uint32_t crc, const std::uint8_t* buf, std::size_t size) {
   std::int64_t length = size;
   std::uint32_t crc0, crc1, crc2, crc3;
@@ -108,5 +110,7 @@ std::uint32_t CRC32C_Extend_ArmLinux(
 
   return crc ^ 0xffffffffu;
 }
+
+}  // namespace crc32c
 
 #endif // defined(HAVE_ARM_LINUX_CRC32C)

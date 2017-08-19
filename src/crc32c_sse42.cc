@@ -24,9 +24,11 @@
 #include <nmmintrin.h>
 #endif  // defined(_MSC_VER)
 
+namespace crc32c {
+
 // For further improvements see Intel publication at:
 // http://download.intel.com/design/intarch/papers/323405.pdf
-std::uint32_t CRC32C_Extend_SSE42(
+std::uint32_t ExtendSse42(
     std::uint32_t crc, const std::uint8_t* buf, std::size_t size) {
   const std::uint8_t *p = reinterpret_cast<const std::uint8_t *>(buf);
   const std::uint8_t *e = p + size;
@@ -73,5 +75,7 @@ std::uint32_t CRC32C_Extend_SSE42(
 #undef STEP1
   return l ^ 0xffffffffu;
 }
+
+}  // namespace crc32c
 
 #endif  // defined(HAVE_SSE42)

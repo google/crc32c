@@ -6,7 +6,7 @@
 
 #if defined(HAVE_ARM_LINUX_CRC32C)
 
-#define TESTED_EXTEND CRC32C_Extend_ArmLinux
+#define TESTED_EXTEND ExtendArmLinux
 #include "./crc32c_extend_unittests.h"
 #undef TESTED_EXTEND
 

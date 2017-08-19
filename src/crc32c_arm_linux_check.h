@@ -18,12 +18,16 @@
 
 #include <sys/auxv.h>
 
-static inline bool CRC32C_CanUseArmLinux() {
+namespace crc32c {
+
+inline bool CanUseArmLinux() {
   // From 'arch/arm64/include/uapi/asm/hwcap.h' in Linux kernel source code.
   constexpr unsigned long kHwCapCrc32 = 1 << 7;
   unsigned long hwcap = getauxval(AT_HWCAP);
   return (hwcap & kHwCapCrc32) != 0;
 }
+
+}  // namespace crc32c
 
 #endif  // defined(HAVE_ARM_LINUX_CRC32C)
 

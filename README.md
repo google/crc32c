@@ -17,6 +17,32 @@ introduced by G. Castagnoli, S. Braeuer and M. Herrmann. CRC32C is used in
 software such as Btrfs, ext4, Ceph and leveldb.
 
 
+## Usage
+
+```cpp
+#include "crc32c/crc32c.h"
+
+int main() {
+  const std::uint8_t buffer[] = {0, 0, 0, 0};
+  std::uint32_t result;
+
+  // Process a raw buffer.
+  result = crc32c::Crc32c(buffer, 4);
+
+  // Process a std::string.
+  std::string string;
+  string.resize(4);
+  result = crc32c::Crc32c(string);
+
+  // If you have C++17 support, process a std::string_view.
+  std::string_view string_view(string);
+  result = crc32c::Crc32c(string_view);
+
+  return 0;
+}
+```
+
+
 ## Prerequisites
 
 This project uses [CMake](https://cmake.org/) for building and testing. CMake is
@@ -47,13 +73,14 @@ apm install autocomplete-plus build build-cmake clang-format language-cmake \
 
 ## Building
 
-The following commands build the project.
+The following commands build and install the project.
 
 ```bash
 mkdir out
 cd out
-cmake .. && cmake --build .
+cmake -DCRC32C_BUILD_TESTS=0 -DCRC32C_BUILD_BENCHMARKS=0 .. && make all install
 ```
+
 
 ## Development
 

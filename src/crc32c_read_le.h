@@ -10,6 +10,8 @@
 
 #include "crc32c/crc32c_config.h"
 
+namespace crc32c {
+
 // Reads a little-endian 32-bit integer from a 32-bit-aligned buffer.
 inline std::uint32_t ReadUint32LE(const std::uint8_t* buffer) {
 #if BYTE_ORDER_BIG_ENDIAN
@@ -43,5 +45,7 @@ inline std::uint64_t ReadUint64LE(const std::uint8_t* buffer) {
   return result;
 #endif  // BYTE_ORDER_BIG_ENDIAN
 }
+
+}  // namespace crc32c
 
 #endif  // CRC32C_CRC32C_READ_LE_H_

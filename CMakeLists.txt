@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(CRC32C VERSION 0.1.0 LANGUAGES C CXX)
+project(Crc32c VERSION 0.1.0 LANGUAGES C CXX)
 
 # This project requires C++11.
 set(CMAKE_CXX_STANDARD 11)
@@ -37,6 +37,7 @@ endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 option(CRC32C_BUILD_TESTS "Build CRC32C's unit tests" ON)
 option(CRC32C_BUILD_BENCHMARKS "Build CRC32C's benchmarks" ON)
 option(CRC32C_USE_GLOG "Build CRC32C's tests with Google Logging" ON)
+option(CRC32C_INSTALL "Install CRC32's header and library" ON)
 
 include(TestBigEndian)
 test_big_endian(BYTE_ORDER_BIG_ENDIAN)
@@ -171,8 +172,10 @@ target_sources(crc32c
     "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_check.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c.cc"
-  PUBLIC
-    "${PROJECT_SOURCE_DIR}/include/crc32c/crc32c.h"
+
+  # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
+  $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
+    "include/crc32c/crc32c.h"
 )
 
 if(CRC32C_BUILD_TESTS)
@@ -180,6 +183,8 @@ if(CRC32C_BUILD_TESTS)
 
   # Prevent overriding the parent project's compiler/linker settings on Windows.
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  set(install_gtest OFF)
+  set(install_gmock OFF)
 
   # This project is tested using GoogleTest.
   add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/googletest")
@@ -223,3 +228,35 @@ if(CRC32C_BUILD_BENCHMARKS)
     target_link_libraries(crc32c_bench glog)
   endif(CRC32C_USE_GLOG)
 endif(CRC32C_BUILD_BENCHMARKS)
+
+if(CRC32C_INSTALL)
+  include(GNUInstallDirs)
+  install(TARGETS crc32c
+    EXPORT Crc32cTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+  install(
+    FILES
+      "${PROJECT_SOURCE_DIR}/include/crc32c/crc32c.h"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file(
+      "${PROJECT_BINARY_DIR}/Crc32cConfigVersion.cmake"
+      COMPATIBILITY SameMajorVersion
+  )
+  install(
+    EXPORT Crc32cTargets
+    NAMESPACE Crc32c::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
+  )
+  install(
+    FILES
+      "${PROJECT_SOURCE_DIR}/Crc32cConfig.cmake"
+      "${PROJECT_BINARY_DIR}/Crc32cConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
+  )
+endif(CRC32C_INSTALL)

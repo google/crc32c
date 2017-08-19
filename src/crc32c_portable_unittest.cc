@@ -4,6 +4,6 @@
 
 #include "./crc32c_internal.h"
 
-#define TESTED_EXTEND CRC32C_Extend_Portable
+#define TESTED_EXTEND ExtendPortable
 #include "./crc32c_extend_unittests.h"
 #undef TESTED_EXTEND

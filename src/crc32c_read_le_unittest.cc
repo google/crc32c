@@ -9,6 +9,8 @@
 
 #include "gtest/gtest.h"
 
+namespace crc32c {
+
 TEST(Uint32LETest, ReadUint32LE) {
   // little-endian 0x12345678
   alignas(4) std::uint8_t bytes[] = {0x78, 0x56, 0x34, 0x12};
@@ -33,3 +35,5 @@ TEST(Uint32LETest, ReadUint64LE) {
       static_cast<uint64_t>(0x123456789ABCDEF0),
       ReadUint64LE(bytes));
 }
+
+}  // namespace crc32c

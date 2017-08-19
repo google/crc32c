@@ -14,8 +14,12 @@
 
 #if defined(HAVE_ARM_LINUX_CRC32C)
 
-std::uint32_t CRC32C_Extend_ArmLinux(
+namespace crc32c {
+
+std::uint32_t ExtendArmLinux(
     std::uint32_t crc, const std::uint8_t* data, std::size_t count);
+
+}  // namespace crc32c
 
 #endif // defined(HAVE_ARM_LINUX_CRC32C)
 

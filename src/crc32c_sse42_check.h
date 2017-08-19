@@ -18,17 +18,29 @@
 
 #if defined(_MSC_VER)
 #include <intrin.h>
-static inline bool CRC32C_CanUseSSE42() {
+
+namespace crc32c {
+
+inline bool CanUseSse42() {
   int cpu_info[4];
   __cpuid(cpu_info, 1);
   return (cpu_info[2] & (1 << 20)) != 0;
 }
+
+}  // namespace crc32c
+
 #else  // !defined(_MSC_VER)
 #include <cpuid.h>
-static inline bool CRC32C_CanUseSSE42() {
+
+namespace crc32c {
+
+inline bool CanUseSse42() {
   unsigned int eax, ebx, ecx, edx;
   return __get_cpuid(1, &eax, &ebx, &ecx, &edx) && ((ecx & (1 << 20)) != 0);
 }
+
+}  // namespace crc32c
+
 #endif  // defined(_MSC_VER)
 
 #endif  // defined(HAVE_SSE42)
