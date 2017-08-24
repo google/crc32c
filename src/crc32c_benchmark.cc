@@ -13,45 +13,46 @@
 #include "glog/logging.h"
 #endif  // CRC32C_TESTS_BUILT_WITH_GLOG
 
-#include "crc32c/crc32c.h"
 #include "./crc32c_arm_linux.h"
 #include "./crc32c_arm_linux_check.h"
 #include "./crc32c_internal.h"
 #include "./crc32c_sse42.h"
 #include "./crc32c_sse42_check.h"
+#include "crc32c/crc32c.h"
 
 class CRC32CBenchmark : public benchmark::Fixture {
  public:
-
   void SetUp(const benchmark::State& state) override {
     block_size_ = state.range(0);
     block_data_ = std::string(block_size_, 'x');
-    block_buffer_ = reinterpret_cast<const std::uint8_t*>(block_data_.data());
+    block_buffer_ = reinterpret_cast<const uint8_t*>(block_data_.data());
   }
 
  protected:
   std::string block_data_;
-  const std::uint8_t* block_buffer_;
-  std::size_t block_size_;
+  const uint8_t* block_buffer_;
+  size_t block_size_;
 };
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Public)(benchmark::State& state) {
-  std::uint32_t crc = 0;
+  uint32_t crc = 0;
   while (state.KeepRunning())
     crc = crc32c::Extend(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
-BENCHMARK_REGISTER_F(CRC32CBenchmark, Public)->RangeMultiplier(16)->Range(
-    256, 16777216);  // Block size.
+BENCHMARK_REGISTER_F(CRC32CBenchmark, Public)
+    ->RangeMultiplier(16)
+    ->Range(256, 16777216);  // Block size.
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Portable)(benchmark::State& state) {
-  std::uint32_t crc = 0;
+  uint32_t crc = 0;
   while (state.KeepRunning())
     crc = crc32c::ExtendPortable(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
-BENCHMARK_REGISTER_F(CRC32CBenchmark, Portable)->RangeMultiplier(16)->Range(
-    256, 16777216);  // Block size.
+BENCHMARK_REGISTER_F(CRC32CBenchmark, Portable)
+    ->RangeMultiplier(16)
+    ->Range(256, 16777216);  // Block size.
 
 #if defined(HAVE_ARM_LINUX_CRC32C)
 BENCHMARK_DEFINE_F(CRC32CBenchmark, ArmLinux)(benchmark::State& state) {
@@ -60,14 +61,15 @@ BENCHMARK_DEFINE_F(CRC32CBenchmark, ArmLinux)(benchmark::State& state) {
     return;
   }
 
-  std::uint32_t crc = 0;
+  uint32_t crc = 0;
   while (state.KeepRunning())
     crc = crc32c::ExtendArmLinux(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
-BENCHMARK_REGISTER_F(CRC32CBenchmark, ArmLinux)->RangeMultiplier(16)->Range(
-    256, 16777216);  // Block size.
-#endif  // defined(HAVE_ARM_LINUX_CRC32C)
+BENCHMARK_REGISTER_F(CRC32CBenchmark, ArmLinux)
+    ->RangeMultiplier(16)
+    ->Range(256, 16777216);  // Block size.
+#endif                       // defined(HAVE_ARM_LINUX_CRC32C)
 
 #if defined(HAVE_SSE42)
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
@@ -76,15 +78,15 @@ BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
     return;
   }
 
-  std::uint32_t crc = 0;
+  uint32_t crc = 0;
   while (state.KeepRunning())
     crc = crc32c::ExtendSse42(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
-BENCHMARK_REGISTER_F(CRC32CBenchmark, Sse42)->RangeMultiplier(16)->Range(
-    256, 16777216);  // Block size.
-#endif  // defined(HAVE_SSE42)
-
+BENCHMARK_REGISTER_F(CRC32CBenchmark, Sse42)
+    ->RangeMultiplier(16)
+    ->Range(256, 16777216);  // Block size.
+#endif                       // defined(HAVE_SSE42)
 
 int main(int argc, char** argv) {
 #ifdef CRC32C_TESTS_BUILT_WITH_GLOG

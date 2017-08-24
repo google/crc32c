@@ -13,14 +13,14 @@
 namespace crc32c {
 
 // Reads a little-endian 32-bit integer from a 32-bit-aligned buffer.
-inline std::uint32_t ReadUint32LE(const std::uint8_t* buffer) {
+inline uint32_t ReadUint32LE(const uint8_t* buffer) {
 #if BYTE_ORDER_BIG_ENDIAN
-  return ((static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[0])))
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[1])) << 8)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[2])) << 16)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[3])) << 24));
-#else  // !BYTE_ORDER_BIG_ENDIAN
-  std::uint32_t result;
+  return ((static_cast<uint32_t>(static_cast<uint8_t>(buffer[0]))) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[1])) << 8) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[2])) << 16) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[3])) << 24));
+#else   // !BYTE_ORDER_BIG_ENDIAN
+  uint32_t result;
   // This should be optimized to a single instruction.
   std::memcpy(&result, buffer, sizeof(result));
   return result;
@@ -28,18 +28,18 @@ inline std::uint32_t ReadUint32LE(const std::uint8_t* buffer) {
 }
 
 // Reads a little-endian 64-bit integer from a 64-bit-aligned buffer.
-inline std::uint64_t ReadUint64LE(const std::uint8_t* buffer) {
+inline uint64_t ReadUint64LE(const uint8_t* buffer) {
 #if BYTE_ORDER_BIG_ENDIAN
-  return ((static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[0])))
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[1])) << 8)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[2])) << 16)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[3])) << 24)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[4])) << 32)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[5])) << 40)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[6])) << 48)
-      | (static_cast<uint32_t>(static_cast<std::uint8_t>(buffer[7])) << 56));
-#else  // !BYTE_ORDER_BIG_ENDIAN
-  std::uint64_t result;
+  return ((static_cast<uint32_t>(static_cast<uint8_t>(buffer[0]))) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[1])) << 8) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[2])) << 16) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[3])) << 24) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[4])) << 32) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[5])) << 40) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[6])) << 48) |
+          (static_cast<uint32_t>(static_cast<uint8_t>(buffer[7])) << 56));
+#else   // !BYTE_ORDER_BIG_ENDIAN
+  uint64_t result;
   // This should be optimized to a single instruction.
   std::memcpy(&result, buffer, sizeof(result));
   return result;

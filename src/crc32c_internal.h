@@ -15,8 +15,7 @@
 namespace crc32c {
 
 // Un-accelerated implementation that works on all CPUs.
-std::uint32_t ExtendPortable(
-    std::uint32_t crc, const uint8_t* data, std::size_t count);
+uint32_t ExtendPortable(uint32_t crc, const uint8_t* data, size_t count);
 
 }  // namespace crc32c
 

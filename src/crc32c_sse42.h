@@ -17,8 +17,7 @@
 namespace crc32c {
 
 // SSE4.2-accelerated implementation in crc32c_sse42.cc
-std::uint32_t ExtendSse42(
-    std::uint32_t crc, const std::uint8_t* data, std::size_t count);
+uint32_t ExtendSse42(uint32_t crc, const uint8_t* data, size_t count);
 
 }  // namespace crc32c
 

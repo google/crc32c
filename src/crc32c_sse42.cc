@@ -17,6 +17,7 @@
 #if defined(HAVE_SSE42)
 
 #include "./crc32c_read_le.h"
+#include "./crc32c_round_up.h"
 
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -28,11 +29,10 @@ namespace crc32c {
 
 // For further improvements see Intel publication at:
 // http://download.intel.com/design/intarch/papers/323405.pdf
-std::uint32_t ExtendSse42(
-    std::uint32_t crc, const std::uint8_t* buf, std::size_t size) {
-  const std::uint8_t *p = reinterpret_cast<const std::uint8_t *>(buf);
-  const std::uint8_t *e = p + size;
-  std::uint32_t l = crc ^ 0xffffffffu;
+uint32_t ExtendSse42(uint32_t crc, const uint8_t* data, size_t size) {
+  const uint8_t* p = data;
+  const uint8_t* e = data + size;
+  uint32_t l = crc ^ 0xffffffffu;
 
 #define STEP1 do {                              \
     l = _mm_crc32_u8(l, *p++);                  \
@@ -49,9 +49,7 @@ std::uint32_t ExtendSse42(
   if (size > 16) {
     // Point x at first 8-byte aligned byte in the buffer. This must be inside
     // the buffer, as long as the buffer is 8 bytes or larger.
-    const std::uintptr_t pval = reinterpret_cast<std::uintptr_t>(p);
-    const std::uint8_t* x =
-        reinterpret_cast<const std::uint8_t*>(((pval + 7) >> 3) << 3);
+    const uint8_t* x = RoundUp<8>(p);
     // Process bytes until p is 8-byte aligned.
     while (p != x) {
       STEP1;

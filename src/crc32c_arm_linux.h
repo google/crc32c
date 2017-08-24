@@ -16,8 +16,7 @@
 
 namespace crc32c {
 
-std::uint32_t ExtendArmLinux(
-    std::uint32_t crc, const std::uint8_t* data, std::size_t count);
+uint32_t ExtendArmLinux(uint32_t crc, const uint8_t* data, size_t count);
 
 }  // namespace crc32c
 

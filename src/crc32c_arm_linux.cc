@@ -54,17 +54,17 @@
 
 namespace crc32c {
 
-std::uint32_t ExtendArmLinux(
-    std::uint32_t crc, const std::uint8_t* buf, std::size_t size) {
-  std::int64_t length = size;
-  std::uint32_t crc0, crc1, crc2, crc3;
-  std::uint64_t t0, t1, t2;
+uint32_t ExtendArmLinux(
+    uint32_t crc, const uint8_t* buf, size_t size) {
+  int64_t length = size;
+  uint32_t crc0, crc1, crc2, crc3;
+  uint64_t t0, t1, t2;
 
   // k0=CRC(x^(3*SEGMENTBYTES*8)), k1=CRC(x^(2*SEGMENTBYTES*8)), k2=CRC(x^(SEGMENTBYTES*8))
   const poly64_t k0 = 0x8d96551c, k1 = 0xbd6f81f8, k2 = 0xdcb17aa4;
 
   crc = crc ^ 0xffffffffu;
-  const std::uint8_t *p = reinterpret_cast<const std::uint8_t *>(buf);
+  const uint8_t *p = reinterpret_cast<const uint8_t *>(buf);
 
   while (length >= KBYTES) {
     crc0 = crc;
@@ -76,11 +76,11 @@ std::uint32_t ExtendArmLinux(
     CRC32C1024BYTES(p);
 
     // Merge the 4 partial CRC32C values.
-    t2 = (std::uint64_t)vmull_p64(crc2, k2);
-    t1 = (std::uint64_t)vmull_p64(crc1, k1);
-    t0 = (std::uint64_t)vmull_p64(crc0, k0);
-    crc = __crc32cd(crc3, *(std::uint64_t *)p);
-    p += sizeof(std::uint64_t);
+    t2 = (uint64_t)vmull_p64(crc2, k2);
+    t1 = (uint64_t)vmull_p64(crc1, k1);
+    t0 = (uint64_t)vmull_p64(crc0, k0);
+    crc = __crc32cd(crc3, *(uint64_t *)p);
+    p += sizeof(uint64_t);
     crc ^= __crc32cd(0, t2);
     crc ^= __crc32cd(0, t1);
     crc ^= __crc32cd(0, t0);
@@ -88,23 +88,23 @@ std::uint32_t ExtendArmLinux(
     length -= KBYTES;
   }
 
-  while(length >= sizeof(std::uint64_t)) {
-    crc = __crc32cd(crc, *(std::uint64_t *)p);
-    p += sizeof(std::uint64_t);
-    length -= sizeof(std::uint64_t);
+  while(length >= sizeof(uint64_t)) {
+    crc = __crc32cd(crc, *(uint64_t *)p);
+    p += sizeof(uint64_t);
+    length -= sizeof(uint64_t);
   }
 
-  if(length & sizeof(std::uint32_t)) {
-    crc = __crc32cw(crc, *(std::uint32_t *)p);
-    p += sizeof(std::uint32_t);
+  if(length & sizeof(uint32_t)) {
+    crc = __crc32cw(crc, *(uint32_t *)p);
+    p += sizeof(uint32_t);
   }
 
-  if(length & sizeof(std::uint16_t)) {
-    crc = __crc32ch(crc, *(std::uint16_t *)p);
-    p += sizeof(std::uint16_t);
+  if(length & sizeof(uint16_t)) {
+    crc = __crc32ch(crc, *(uint16_t *)p);
+    p += sizeof(uint16_t);
   }
 
-  if(length & sizeof(std::uint8_t)) {
+  if(length & sizeof(uint8_t)) {
     crc = __crc32cb(crc, *p);
   }
 

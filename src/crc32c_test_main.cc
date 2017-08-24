@@ -10,7 +10,7 @@
 #include "glog/logging.h"
 #endif  // CRC32C_TESTS_BUILT_WITH_GLOG
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 #ifdef CRC32C_TESTS_BUILT_WITH_GLOG
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();

@@ -15,8 +15,7 @@
 
 namespace crc32c {
 
-std::uint32_t Extend(
-    std::uint32_t crc, const std::uint8_t* data, std::size_t count) {
+uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count) {
 #if defined(HAVE_SSE42)
   static bool can_use_sse42 = CanUseSse42();
   if (can_use_sse42)
