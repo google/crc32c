@@ -14,6 +14,7 @@
 #include <cstdint>
 
 #include "crc32c/crc32c_config.h"
+#include "./crc32c_internal.h"
 
 #if defined(HAVE_ARM_LINUX_CRC32C)
 
@@ -63,7 +64,7 @@ uint32_t ExtendArmLinux(
   // k0=CRC(x^(3*SEGMENTBYTES*8)), k1=CRC(x^(2*SEGMENTBYTES*8)), k2=CRC(x^(SEGMENTBYTES*8))
   const poly64_t k0 = 0x8d96551c, k1 = 0xbd6f81f8, k2 = 0xdcb17aa4;
 
-  crc = crc ^ 0xffffffffu;
+  crc = crc ^ kCRC32Xor;
   const uint8_t *p = reinterpret_cast<const uint8_t *>(buf);
 
   while (length >= KBYTES) {
@@ -108,7 +109,7 @@ uint32_t ExtendArmLinux(
     crc = __crc32cb(crc, *p);
   }
 
-  return crc ^ 0xffffffffu;
+  return crc ^ kCRC32Xor;
 }
 
 }  // namespace crc32c

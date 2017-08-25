@@ -196,7 +196,7 @@ namespace crc32c {
 uint32_t ExtendPortable(uint32_t crc, const uint8_t* buf, size_t size) {
   const uint8_t* p = buf;
   const uint8_t* e = p + size;
-  uint32_t l = crc ^ 0xffffffffu;
+  uint32_t l = crc ^ kCRC32Xor;
 
 #define STEP1                  \
   do {                         \
@@ -237,7 +237,7 @@ uint32_t ExtendPortable(uint32_t crc, const uint8_t* buf, size_t size) {
   }
 #undef STEP4
 #undef STEP1
-  return l ^ 0xffffffffu;
+  return l ^ kCRC32Xor;
 }
 
 }  // namespace crc32c

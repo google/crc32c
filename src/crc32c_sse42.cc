@@ -13,11 +13,11 @@
 #include <cstdint>
 
 #include "crc32c/crc32c_config.h"
-
-#if defined(HAVE_SSE42)
-
+#include "./crc32c_internal.h"
 #include "./crc32c_read_le.h"
 #include "./crc32c_round_up.h"
+
+#if defined(HAVE_SSE42)
 
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -32,7 +32,7 @@ namespace crc32c {
 uint32_t ExtendSse42(uint32_t crc, const uint8_t* data, size_t size) {
   const uint8_t* p = data;
   const uint8_t* e = data + size;
-  uint32_t l = crc ^ 0xffffffffu;
+  uint32_t l = crc ^ kCRC32Xor;
 
 #define STEP1 do {                              \
     l = _mm_crc32_u8(l, *p++);                  \
@@ -71,7 +71,7 @@ uint32_t ExtendSse42(uint32_t crc, const uint8_t* data, size_t size) {
 #undef STEP8
 #undef STEP4
 #undef STEP1
-  return l ^ 0xffffffffu;
+  return l ^ kCRC32Xor;
 }
 
 }  // namespace crc32c
