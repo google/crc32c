@@ -71,7 +71,8 @@ BENCHMARK_REGISTER_F(CRC32CBenchmark, ArmLinux)
     ->Range(256, 16777216);  // Block size.
 #endif                       // defined(HAVE_ARM_LINUX_CRC32C)
 
-#if defined(HAVE_SSE42)
+#if defined(HAVE_SSE42)  && (defined(_M_X64) || defined(__x86_64__))
+
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
   if (!crc32c::CanUseSse42()) {
     state.SkipWithError("SSE4.2 instructions not available or not enabled");
@@ -86,7 +87,8 @@ BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
 BENCHMARK_REGISTER_F(CRC32CBenchmark, Sse42)
     ->RangeMultiplier(16)
     ->Range(256, 16777216);  // Block size.
-#endif                       // defined(HAVE_SSE42)
+
+#endif  // defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
 
 int main(int argc, char** argv) {
 #ifdef CRC32C_TESTS_BUILT_WITH_GLOG

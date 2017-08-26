@@ -86,7 +86,10 @@ check_cxx_source_compiles("
 #endif  // defined(_MSC_VER)
 
 int main() {
-  _mm_crc32_u8(0, 0); _mm_crc32_u32(0, 0); _mm_crc32_u64(0, 0);
+  _mm_crc32_u8(0, 0); _mm_crc32_u32(0, 0);
+#if defined(_M_X64) || defined(__x86_64__)
+   _mm_crc32_u64(0, 0);
+#endif // defined(_M_X64) || defined(__x86_64__)
   return 0;
 }
 "  HAVE_SSE42)
