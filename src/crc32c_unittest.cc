@@ -52,6 +52,28 @@ TEST(CRC32CTest, Extend) {
             crc32c::Extend(crc32c::Crc32c(hello_space, 6), world, 5));
 }
 
+TEST(CRC32CTest, Crc32cCharPointer) {
+  char buf[32];
+
+  std::memset(buf, 0, sizeof(buf));
+  EXPECT_EQ(static_cast<uint32_t>(0x8a9136aa),
+            crc32c::Crc32c(buf, sizeof(buf)));
+
+  std::memset(buf, 0xff, sizeof(buf));
+  EXPECT_EQ(static_cast<uint32_t>(0x62a8ab43),
+            crc32c::Crc32c(buf, sizeof(buf)));
+
+  for (size_t i = 0; i < 32; ++i)
+    buf[i] = static_cast<char>(i);
+  EXPECT_EQ(static_cast<uint32_t>(0x46dd794e),
+            crc32c::Crc32c(buf, sizeof(buf)));
+
+  for (size_t i = 0; i < 32; ++i)
+    buf[i] = static_cast<char>(31 - i);
+  EXPECT_EQ(static_cast<uint32_t>(0x113fdb5c),
+            crc32c::Crc32c(buf, sizeof(buf)));
+}
+
 TEST(CRC32CTest, Crc32cStdString) {
   std::string buf;
   buf.resize(32);

@@ -22,6 +22,11 @@ inline uint32_t Crc32c(const uint8_t* data, size_t count) {
   return Extend(0, data, count);
 }
 
+// Computes the CRC32C of "count" bytes in the buffer pointed by "data".
+inline uint32_t Crc32c(const char* data, size_t count) {
+  return Extend(0, reinterpret_cast<const uint8_t*>(data), count);
+}
+
 // Computes the CRC32C of the string's content.
 inline uint32_t Crc32c(const std::string& string) {
   return Crc32c(reinterpret_cast<const uint8_t*>(string.data()),
