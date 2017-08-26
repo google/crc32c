@@ -46,8 +46,8 @@ test_big_endian(BYTE_ORDER_BIG_ENDIAN)
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
 int main() {
-  int data = 0;
-  int* address = &data;
+  char data = 0;
+  const char* address = &data;
   __builtin_prefetch(address, 0, 0);
   return 0;
 }
@@ -57,14 +57,14 @@ int main() {
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
 #if defined(_MSC_VER)
-#include <mmintrin.h>
+#include <intrin.h>
 #else  // !defined(_MSC_VER)
 #include <xmmintrin.h>
 #endif  // defined(_MSC_VER)
 
 int main() {
-  int data = 0;
-  int* address = &data;
+  char data = 0;
+  const char* address = &data;
   _mm_prefetch(address, _MM_HINT_NTA);
   return 0;
 }
