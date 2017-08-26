@@ -42,8 +42,35 @@ option(CRC32C_INSTALL "Install CRC32's header and library" ON)
 include(TestBigEndian)
 test_big_endian(BYTE_ORDER_BIG_ENDIAN)
 
-# Check for SSE4.2 support in the compiler.
+# Check for __builtin_prefetch support in the compiler.
 include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+int main() {
+  int data = 0;
+  int* address = &data;
+  __builtin_prefetch(address, 0, 0);
+  return 0;
+}
+"  HAVE_BUILTIN_PREFETCH)
+
+# Check for _mm_prefetch support in the compiler.
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+#if defined(_MSC_VER)
+#include <mmintrin.h>
+#else  // !defined(_MSC_VER)
+#include <xmmintrin.h>
+#endif  // defined(_MSC_VER)
+
+int main() {
+  int data = 0;
+  int* address = &data;
+  _mm_prefetch(address, _MM_HINT_NTA);
+  return 0;
+}
+"  HAVE_MM_PREFETCH)
+
+# Check for SSE4.2 support in the compiler.
 set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} /arch:AVX")
@@ -168,6 +195,7 @@ target_sources(crc32c
     "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux_check.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_internal.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_portable.cc"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_prefetch.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_read_le.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_round_up.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
@@ -197,6 +225,7 @@ if(CRC32C_BUILD_TESTS)
       "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_extend_unittests.h"
       "${PROJECT_SOURCE_DIR}/src/crc32c_portable_unittest.cc"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_prefetch_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_read_le_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_round_up_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_unittest.cc"

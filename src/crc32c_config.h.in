@@ -8,6 +8,12 @@
 /* Define to 1 if building for a big-endian platform. */
 #cmakedefine BYTE_ORDER_BIG_ENDIAN 1
 
+/* Define to 1 if the compiler has the __builtin_prefetch intrinsic. */
+#cmakedefine HAVE_BUILTIN_PREFETCH 1
+
+/* Define to 1 if the compiler has the _mm_prefetch intrinsic. */
+#cmakedefine HAVE_MM_PREFETCH 1
+
 /* Define to 1 if the compiler has the _mm_crc32_u{8,32,64} intrinsics. */
 #cmakedefine HAVE_SSE42 1
 
