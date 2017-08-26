@@ -244,8 +244,8 @@ constexpr const ptrdiff_t kPrefetchHorizon = 256;
 
 namespace crc32c {
 
-uint32_t ExtendPortable(uint32_t crc, const uint8_t* buf, size_t size) {
-  const uint8_t* p = buf;
+uint32_t ExtendPortable(uint32_t crc, const uint8_t* data, size_t size) {
+  const uint8_t* p = data;
   const uint8_t* e = p + size;
   uint32_t l = crc ^ kCRC32Xor;
 
