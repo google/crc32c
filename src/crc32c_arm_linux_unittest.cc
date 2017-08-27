@@ -4,10 +4,10 @@
 
 #include "./crc32c_arm_linux.h"
 
-#if defined(HAVE_ARM_LINUX_CRC32C)
+#if defined(HAVE_ARM_CRC32C)
 
 #define TESTED_EXTEND ExtendArmLinux
 #include "./crc32c_extend_unittests.h"
 #undef TESTED_EXTEND
 
-#endif  // defined(HAVE_ARM_LINUX_CRC32C)
+#endif  // defined(HAVE_ARM_CRC32C)

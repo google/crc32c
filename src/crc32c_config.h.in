@@ -17,10 +17,16 @@
 /* Define to 1 if the compiler has the _mm_crc32_u{8,32,64} intrinsics. */
 #cmakedefine HAVE_SSE42 1
 
-/* Define to 1 if the compiler has the __crc32cd and vmull_p64 intrinsics, and
-   the getauxval function in the <sys/auxv.h> header. The latter should be true
-   on Linux. */
-#cmakedefine HAVE_ARM_LINUX_CRC32C 1
+/* Define to 1 if the compiler has the __crc32cd and vmull_p64 intrinsics. */
+#cmakedefine HAVE_ARM_CRC32C 1
+
+/* Define to 1 if the system libraries have the getauxval function in the
+   <sys/auxv.h> header. Should be true on Linux and Android API level 20+. */
+#cmakedefine HAVE_STRONG_GETAUXVAL 1
+
+/* Define to 1 if the compiler supports defining getauxval as a weak symbol.
+   Should be true for any compiler that supports __attribute__((weak)). */
+#cmakedefine HAVE_WEAK_GETAUXVAL 1
 
 /* Define to 1 if CRC32C tests have been built with Google Logging. */
 #cmakedefine CRC32C_TESTS_BUILT_WITH_GLOG 1

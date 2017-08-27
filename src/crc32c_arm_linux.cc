@@ -16,7 +16,7 @@
 #include "crc32c/crc32c_config.h"
 #include "./crc32c_internal.h"
 
-#if defined(HAVE_ARM_LINUX_CRC32C)
+#if defined(HAVE_ARM_CRC32C)
 
 #include <arm_acle.h>
 #include <arm_neon.h>
@@ -114,4 +114,4 @@ uint32_t ExtendArmLinux(
 
 }  // namespace crc32c
 
-#endif // defined(HAVE_ARM_LINUX_CRC32C)
+#endif // defined(HAVE_ARM_CRC32C)

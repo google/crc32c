@@ -95,7 +95,7 @@ int main() {
 "  HAVE_SSE42)
 set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
 
-# Check for AArch64 + Linux support in the compiler.
+# Check for AArch64 support in the compiler.
 set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # TODO(pwnall): Insert correct flag when VS gets ARM CRC32C support.
@@ -106,14 +106,36 @@ endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 check_cxx_source_compiles("
 #include <arm_acle.h>
 #include <arm_neon.h>
+
+int main() {
+  __crc32cd(0, 0); vmull_p64(0, 0);
+  return 0;
+}
+" HAVE_ARM_CRC32C)
+set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
+
+# Check for strong getauxval() support in the system headers.
+check_cxx_source_compiles("
+#include <arm_acle.h>
+#include <arm_neon.h>
 #include <sys/auxv.h>
 
 int main() {
-  __crc32cd(0, 0); vmull_p64(0, 0); getauxval(AT_HWCAP);
+  getauxval(AT_HWCAP);
   return 0;
 }
-" HAVE_ARM_LINUX_CRC32C)
-set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
+" HAVE_STRONG_GETAUXVAL)
+
+# Check for weak getauxval() support in the compiler.
+check_cxx_source_compiles("
+unsigned long getauxval(unsigned long type) __attribute__((weak));
+#define AT_HWCAP 16
+
+int main() {
+  getauxval(AT_HWCAP);
+  return 0;
+}
+" HAVE_WEAK_GETAUXVAL)
 
 if(CRC32C_USE_GLOG)
   # glog's test targets trigger deprecation warnings, and compiling them burns
@@ -159,14 +181,14 @@ target_sources(crc32c_arm_linux
     "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.cc"
     "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.h"
 )
-if(HAVE_ARM_LINUX_CRC32C)
+if(HAVE_ARM_CRC32C)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # TODO(pwnall): Insert correct flag when VS gets ARM CRC32C support.
     target_compile_options(crc32c_arm_linux PRIVATE "/arch:NOTYET")
   else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(crc32c_arm_linux PRIVATE "-march=armv8-a+crc+crypto")
   endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-endif(HAVE_ARM_LINUX_CRC32C)
+endif(HAVE_ARM_CRC32C)
 
 # SSE4.2 code is built separately, so we don't accidentally compile unsupported
 # instructions into code that gets run without SSE4.2 support.
