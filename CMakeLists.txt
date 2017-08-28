@@ -167,10 +167,10 @@ if(CRC32C_USE_GLOG)
 
   # glog triggers unused parameter warnings on clang.
   check_cxx_compiler_flag(-Wno-unused-parameter CRC32C_HAVE_NO_UNUSED_PARAMETER)
-  if(CRC32C_HAVE_NO_SIGN_COMPARE)
+  if(CRC32C_HAVE_NO_UNUSED_PARAMETER)
     set_property(TARGET glog
                  APPEND PROPERTY COMPILE_OPTIONS -Wno-unused-parameter)
-  endif(CRC32C_HAVE_NO_SIGN_COMPARE)
+  endif(CRC32C_HAVE_NO_UNUSED_PARAMETER)
 
   set(CRC32C_TESTS_BUILT_WITH_GLOG 1)
 endif(CRC32C_USE_GLOG)
