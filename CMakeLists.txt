@@ -111,7 +111,7 @@ int main() {
   __crc32cd(0, 0); vmull_p64(0, 0);
   return 0;
 }
-" HAVE_ARM_CRC32C)
+" HAVE_ARM64_CRC32C)
 set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQURED_FLAGS})
 
 # Check for strong getauxval() support in the system headers.
@@ -172,23 +172,23 @@ include_directories(
   "${PROJECT_BINARY_DIR}/include"
 )
 
-# ARM CRC32C code is built separately, so we don't accidentally compile
+# ARM64 CRC32C code is built separately, so we don't accidentally compile
 # unsupported instructions into code that gets run without ARM32 support.
-add_library(crc32c_arm_linux OBJECT "")
-target_sources(crc32c_arm_linux
+add_library(crc32c_arm64 OBJECT "")
+target_sources(crc32c_arm64
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.cc"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64.cc"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64.h"
 )
-if(HAVE_ARM_CRC32C)
+if(HAVE_ARM64_CRC32C)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # TODO(pwnall): Insert correct flag when VS gets ARM CRC32C support.
-    target_compile_options(crc32c_arm_linux PRIVATE "/arch:NOTYET")
+    # TODO(pwnall): Insert correct flag when VS gets ARM64 CRC32C support.
+    target_compile_options(crc32c_arm64 PRIVATE "/arch:NOTYET")
   else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(crc32c_arm_linux PRIVATE "-march=armv8-a+crc+crypto")
+    target_compile_options(crc32c_arm64 PRIVATE "-march=armv8-a+crc+crypto")
   endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-endif(HAVE_ARM_CRC32C)
+endif(HAVE_ARM64_CRC32C)
 
 # SSE4.2 code is built separately, so we don't accidentally compile unsupported
 # instructions into code that gets run without SSE4.2 support.
@@ -210,14 +210,14 @@ endif(HAVE_SSE42)
 add_library(crc32c ""
   # TODO(pwnall): Move the TARGET_OBJECTS generator expressions to the PRIVATE
   # section of target_sources when cmake_minimum_required becomes 3.9 or above.
-  $<TARGET_OBJECTS:crc32c_arm_linux>
+  $<TARGET_OBJECTS:crc32c_arm64>
   $<TARGET_OBJECTS:crc32c_sse42>
 )
 target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux_check.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64.h"
+    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64_linux_check.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_internal.h"
     "${PROJECT_SOURCE_DIR}/src/crc32c_portable.cc"
     "${PROJECT_SOURCE_DIR}/src/crc32c_prefetch.h"
@@ -247,7 +247,7 @@ if(CRC32C_BUILD_TESTS)
   target_sources(crc32c_tests
     PRIVATE
       "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_arm_linux_unittest.cc"
+      "${PROJECT_SOURCE_DIR}/src/crc32c_arm64_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_extend_unittests.h"
       "${PROJECT_SOURCE_DIR}/src/crc32c_portable_unittest.cc"
       "${PROJECT_SOURCE_DIR}/src/crc32c_prefetch_unittest.cc"

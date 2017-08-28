@@ -12,14 +12,14 @@
 
 #include "crc32c/crc32c_config.h"
 
-#if defined(HAVE_ARM_CRC32C)
+#if defined(HAVE_ARM64_CRC32C)
 
 namespace crc32c {
 
-uint32_t ExtendArmLinux(uint32_t crc, const uint8_t* data, size_t count);
+uint32_t ExtendArm64(uint32_t crc, const uint8_t* data, size_t count);
 
 }  // namespace crc32c
 
-#endif // defined(HAVE_ARM_CRC32C)
+#endif // defined(HAVE_ARM64_CRC32C)
 
 #endif  // CRC32C_CRC32C_ARM_LINUX_H_

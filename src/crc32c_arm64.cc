@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "./crc32c_arm_linux.h"
+#include "./crc32c_arm64.h"
 
 // In a separate source file to allow this accelerated CRC32C function to be
 // compiled with the appropriate compiler flags to enable ARM NEON CRC32C
@@ -16,7 +16,7 @@
 #include "crc32c/crc32c_config.h"
 #include "./crc32c_internal.h"
 
-#if defined(HAVE_ARM_CRC32C)
+#if defined(HAVE_ARM64_CRC32C)
 
 #include <arm_acle.h>
 #include <arm_neon.h>
@@ -55,7 +55,7 @@
 
 namespace crc32c {
 
-uint32_t ExtendArmLinux(
+uint32_t ExtendArm64(
     uint32_t crc, const uint8_t* buf, size_t size) {
   int64_t length = size;
   uint32_t crc0, crc1, crc2, crc3;
@@ -114,4 +114,4 @@ uint32_t ExtendArmLinux(
 
 }  // namespace crc32c
 
-#endif // defined(HAVE_ARM_CRC32C)
+#endif // defined(HAVE_ARM64_CRC32C)

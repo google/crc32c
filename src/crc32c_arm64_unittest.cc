@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "./crc32c_arm_linux.h"
+#include "./crc32c_arm64.h"
 
-#if defined(HAVE_ARM_CRC32C)
+#if defined(HAVE_ARM64_CRC32C)
 
-#define TESTED_EXTEND ExtendArmLinux
+#define TESTED_EXTEND ExtendArm64
 #include "./crc32c_extend_unittests.h"
 #undef TESTED_EXTEND
 
-#endif  // defined(HAVE_ARM_CRC32C)
+#endif  // defined(HAVE_ARM64_CRC32C)

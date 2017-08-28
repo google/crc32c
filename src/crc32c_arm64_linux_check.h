@@ -14,7 +14,7 @@
 
 #include "crc32c/crc32c_config.h"
 
-#if defined(HAVE_ARM_CRC32C)
+#if defined(HAVE_ARM64_CRC32C)
 
 #if defined(HAVE_STRONG_GETAUXVAL)
 #include <sys/auxv.h>
@@ -35,12 +35,12 @@ inline bool CanUseArmLinux() {
   unsigned long hwcap = (getauxval != nullptr) ? getauxval(AT_HWCAP) : 0;
   return (hwcap & kHwCapCrc32) != 0;
 #else
-  return 0;
+  return false;
 #endif  // defined(HAVE_STRONG_GETAUXVAL) || defined(HAVE_WEAK_GETAUXVAL)
 }
 
 }  // namespace crc32c
 
-#endif  // defined(HAVE_ARM_CRC32C)
+#endif  // defined(HAVE_ARM64_CRC32C)
 
 #endif  // CRC32C_CRC32C_ARM_LINUX_CHECK_H_

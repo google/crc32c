@@ -7,8 +7,8 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "./crc32c_arm_linux.h"
-#include "./crc32c_arm_linux_check.h"
+#include "./crc32c_arm64.h"
+#include "./crc32c_arm64_linux_check.h"
 #include "./crc32c_internal.h"
 #include "./crc32c_sse42.h"
 #include "./crc32c_sse42_check.h"
@@ -20,10 +20,10 @@ uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count) {
   static bool can_use_sse42 = CanUseSse42();
   if (can_use_sse42)
     return ExtendSse42(crc, data, count);
-#elif defined(HAVE_ARM_CRC32C)
+#elif defined(HAVE_ARM64_CRC32C)
   static bool can_use_arm_linux = CanUseArmLinux();
   if (can_use_arm_linux)
-    return ExtendArmLinux(crc, data, count);
+    return ExtendArm64(crc, data, count);
 #endif
 
   return ExtendPortable(crc, data, count);

@@ -18,7 +18,7 @@
 #cmakedefine HAVE_SSE42 1
 
 /* Define to 1 if the compiler has the __crc32cd and vmull_p64 intrinsics. */
-#cmakedefine HAVE_ARM_CRC32C 1
+#cmakedefine HAVE_ARM64_CRC32C 1
 
 /* Define to 1 if the system libraries have the getauxval function in the
    <sys/auxv.h> header. Should be true on Linux and Android API level 20+. */
