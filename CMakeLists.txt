@@ -180,10 +180,7 @@ configure_file(
   "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
 )
 
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_BINARY_DIR}/include"
-)
+include_directories("${PROJECT_BINARY_DIR}/include")
 
 # ARM64 CRC32C code is built separately, so we don't accidentally compile
 # unsupported instructions into code that gets run without ARM32 support.
@@ -243,6 +240,12 @@ target_sources(crc32c
   # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
   $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
     "include/crc32c/crc32c.h"
+)
+
+target_include_directories(crc32c
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 if(CRC32C_BUILD_TESTS)

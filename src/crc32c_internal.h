@@ -10,8 +10,6 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "crc32c/crc32c.h"
-
 namespace crc32c {
 
 // Un-accelerated implementation that works on all CPUs.
