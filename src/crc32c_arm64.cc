@@ -89,23 +89,23 @@ uint32_t ExtendArm64(
     length -= KBYTES;
   }
 
-  while(length >= sizeof(uint64_t)) {
+  while(length >= 8) {
     crc = __crc32cd(crc, *(uint64_t *)p);
-    p += sizeof(uint64_t);
-    length -= sizeof(uint64_t);
+    p += 8;
+    length -= 8;
   }
 
-  if(length & sizeof(uint32_t)) {
+  if(length & 4) {
     crc = __crc32cw(crc, *(uint32_t *)p);
-    p += sizeof(uint32_t);
+    p += 4;
   }
 
-  if(length & sizeof(uint16_t)) {
+  if(length & 2) {
     crc = __crc32ch(crc, *(uint16_t *)p);
-    p += sizeof(uint16_t);
+    p += 2;
   }
 
-  if(length & sizeof(uint8_t)) {
+  if(length & 1) {
     crc = __crc32cb(crc, *p);
   }
 

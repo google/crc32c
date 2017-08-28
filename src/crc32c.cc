@@ -21,7 +21,7 @@ uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count) {
   if (can_use_sse42)
     return ExtendSse42(crc, data, count);
 #elif defined(HAVE_ARM64_CRC32C)
-  static bool can_use_arm_linux = CanUseArmLinux();
+  static bool can_use_arm_linux = CanUseArm64Linux();
   if (can_use_arm_linux)
     return ExtendArm64(crc, data, count);
 #endif

@@ -56,7 +56,7 @@ BENCHMARK_REGISTER_F(CRC32CBenchmark, Portable)
 
 #if defined(HAVE_ARM64_CRC32C)
 BENCHMARK_DEFINE_F(CRC32CBenchmark, ArmLinux)(benchmark::State& state) {
-  if (!crc32c::CanUseArmLinux()) {
+  if (!crc32c::CanUseArm64Linux()) {
     state.SkipWithError("ARM CRC32C instructions not available or not enabled");
     return;
   }

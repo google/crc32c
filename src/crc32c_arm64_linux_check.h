@@ -28,11 +28,11 @@ extern "C" unsigned long getauxval(unsigned long type) __attribute__((weak));
 
 namespace crc32c {
 
-inline bool CanUseArmLinux() {
+inline bool CanUseArm64Linux() {
 #if defined(HAVE_STRONG_GETAUXVAL) || defined(HAVE_WEAK_GETAUXVAL)
   // From 'arch/arm64/include/uapi/asm/hwcap.h' in Linux kernel source code.
   constexpr unsigned long kHwCapCrc32 = 1 << 7;
-  unsigned long hwcap = (getauxval != nullptr) ? getauxval(AT_HWCAP) : 0;
+  unsigned long hwcap = (&getauxval != nullptr) ? getauxval(AT_HWCAP) : 0;
   return (hwcap & kHwCapCrc32) != 0;
 #else
   return false;

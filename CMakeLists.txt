@@ -17,20 +17,25 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   endif(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
 
 else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  # use -Wall for clang and gcc
-  if(NOT CMAKE_CXX_FLAGS MATCHES "-Wall$")
+  # Use -Wall for clang and gcc.
+  if(NOT CMAKE_CXX_FLAGS MATCHES "-Wall")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wall$")
+  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wall")
 
-  # use -Werror for clang and gcc
-  if(NOT CMAKE_CXX_FLAGS MATCHES "-Werror$")
+  # Use -Wextra for clang and gcc.
+  if(NOT CMAKE_CXX_FLAGS MATCHES "-Wextra")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wextra")
+
+  # Use -Werror for clang and gcc.
+  if(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Werror$")
+  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
 
-  # Disable C++ exceptions
+  # Disable C++ exceptions.
   string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
-  # Disable RTTI
+  # Disable RTTI.
   string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
@@ -108,7 +113,8 @@ check_cxx_source_compiles("
 #include <arm_neon.h>
 
 int main() {
-  __crc32cd(0, 0); vmull_p64(0, 0);
+  __crc32cb(0, 0); __crc32ch(0, 0); __crc32cw(0, 0); __crc32cd(0, 0);
+  vmull_p64(0, 0);
   return 0;
 }
 " HAVE_ARM64_CRC32C)
@@ -148,15 +154,22 @@ if(CRC32C_USE_GLOG)
   # glog triggers deprecation warnings on OSX.
   # https://github.com/google/glog/issues/185
   include(CheckCXXCompilerFlag)
-  check_cxx_compiler_flag(-Wdeprecated CRC32C_HAVE_NO_DEPRECATED)
+  check_cxx_compiler_flag(-Wno-deprecated CRC32C_HAVE_NO_DEPRECATED)
   if(CRC32C_HAVE_NO_DEPRECATED)
     set_property(TARGET glog APPEND PROPERTY COMPILE_OPTIONS -Wno-deprecated)
   endif(CRC32C_HAVE_NO_DEPRECATED)
 
   # glog triggers sign comparison warnings on gcc.
-  check_cxx_compiler_flag(-Wdeprecated CRC32C_HAVE_NO_SIGN_COMPARE)
+  check_cxx_compiler_flag(-Wno-sign-compare CRC32C_HAVE_NO_SIGN_COMPARE)
   if(CRC32C_HAVE_NO_SIGN_COMPARE)
     set_property(TARGET glog APPEND PROPERTY COMPILE_OPTIONS -Wno-sign-compare)
+  endif(CRC32C_HAVE_NO_SIGN_COMPARE)
+
+  # glog triggers unused parameter warnings on clang.
+  check_cxx_compiler_flag(-Wno-unused-parameter CRC32C_HAVE_NO_UNUSED_PARAMETER)
+  if(CRC32C_HAVE_NO_SIGN_COMPARE)
+    set_property(TARGET glog
+                 APPEND PROPERTY COMPILE_OPTIONS -Wno-unused-parameter)
   endif(CRC32C_HAVE_NO_SIGN_COMPARE)
 
   set(CRC32C_TESTS_BUILT_WITH_GLOG 1)
