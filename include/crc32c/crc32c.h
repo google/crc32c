@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The CRC32C Authors. All rights reserved.
+// Copyright 2017 The CRC32C Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -13,7 +13,7 @@
 
 namespace crc32c {
 
-// Extends "crc" with the CRC32 of "count" bytes in the buffer pointed by
+// Extends "crc" with the CRC32C of "count" bytes in the buffer pointed by
 // "data".
 uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count);
 

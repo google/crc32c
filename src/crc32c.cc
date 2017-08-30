@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The CRC32C Authors. All rights reserved.
+// Copyright 2017 The CRC32C Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -18,12 +18,10 @@ namespace crc32c {
 uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count) {
 #if defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
   static bool can_use_sse42 = CanUseSse42();
-  if (can_use_sse42)
-    return ExtendSse42(crc, data, count);
+  if (can_use_sse42) return ExtendSse42(crc, data, count);
 #elif defined(HAVE_ARM64_CRC32C)
   static bool can_use_arm_linux = CanUseArm64Linux();
-  if (can_use_arm_linux)
-    return ExtendArm64(crc, data, count);
+  if (can_use_arm_linux) return ExtendArm64(crc, data, count);
 #endif
 
   return ExtendPortable(crc, data, count);

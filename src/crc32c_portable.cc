@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The CRC32C Authors. All rights reserved.
+// Copyright 2017 The CRC32C Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -250,38 +250,40 @@ uint32_t ExtendPortable(uint32_t crc, const uint8_t* data, size_t size) {
   uint32_t l = crc ^ kCRC32Xor;
 
 // Process one byte at a time.
-#define STEP1                               \
-  do {                                      \
-    int c = (l & 0xff) ^ *p++;              \
-    l = kByteExtensionTable[c] ^ (l >> 8);  \
+#define STEP1                              \
+  do {                                     \
+    int c = (l & 0xff) ^ *p++;             \
+    l = kByteExtensionTable[c] ^ (l >> 8); \
   } while (0)
 
 // Process one of the 4 strides of 4-byte data.
-#define STEP4(s) do {                        \
-  crc##s = ReadUint32LE(p + s * 4) ^         \
-           kStrideExtensionTable3[crc##s & 0xff] ^          \
-           kStrideExtensionTable2[(crc##s >> 8) & 0xff] ^   \
-           kStrideExtensionTable1[(crc##s >> 16) & 0xff] ^  \
-           kStrideExtensionTable0[crc##s >> 24];            \
-} while (0)
+#define STEP4(s)                                                               \
+  do {                                                                         \
+    crc##s = ReadUint32LE(p + s * 4) ^ kStrideExtensionTable3[crc##s & 0xff] ^ \
+             kStrideExtensionTable2[(crc##s >> 8) & 0xff] ^                    \
+             kStrideExtensionTable1[(crc##s >> 16) & 0xff] ^                   \
+             kStrideExtensionTable0[crc##s >> 24];                             \
+  } while (0)
 
 // Process a 16-byte swath of 4 strides, each of which has 4 bytes of data.
-#define STEP16 do {  \
-  STEP4(0);          \
-  STEP4(1);          \
-  STEP4(2);          \
-  STEP4(3);          \
-  p += 16;           \
-} while (0)
+#define STEP16 \
+  do {         \
+    STEP4(0);  \
+    STEP4(1);  \
+    STEP4(2);  \
+    STEP4(3);  \
+    p += 16;   \
+  } while (0)
 
 // Process 4 bytes that were already loaded into a word.
-#define STEP4W(w) do {                             \
-  w ^= l;                                          \
-  for (size_t i = 0; i < 4; ++i) {                 \
-    w = (w >> 8) ^ kByteExtensionTable[w & 0xff];  \
-  }                                                \
-  l = w;                                           \
-} while (0)
+#define STEP4W(w)                                   \
+  do {                                              \
+    w ^= l;                                         \
+    for (size_t i = 0; i < 4; ++i) {                \
+      w = (w >> 8) ^ kByteExtensionTable[w & 0xff]; \
+    }                                               \
+    l = w;                                          \
+  } while (0)
 
   // Point x at first 4-byte aligned byte in the buffer. This might be past the
   // end of the buffer.
@@ -301,11 +303,14 @@ uint32_t ExtendPortable(uint32_t crc, const uint8_t* data, size_t size) {
     uint32_t crc3 = ReadUint32LE(p + 3 * 4);
     p += 16;
 
-    while((e - p) > kPrefetchHorizon) {
+    while ((e - p) > kPrefetchHorizon) {
       RequestPrefetch(p + kPrefetchHorizon);
 
       // Process 64 bytes at a time.
-      STEP16; STEP16; STEP16; STEP16;
+      STEP16;
+      STEP16;
+      STEP16;
+      STEP16;
     }
 
     // Process one 16-byte swath at a time.

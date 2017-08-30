@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The CRC32C Authors. All rights reserved.
+// Copyright 2017 The CRC32C Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -27,9 +27,8 @@ inline void RequestPrefetch(const uint8_t* address) {
 #if defined(HAVE_BUILTIN_PREFETCH)
   // Clang and GCC implement the __builtin_prefetch non-standard extension,
   // which maps to the best instruction on the target architecture.
-  __builtin_prefetch(
-      reinterpret_cast<const char*>(address),
-      0  /* Read only. */, 0  /* No temporal locality. */);
+  __builtin_prefetch(reinterpret_cast<const char*>(address), 0 /* Read only. */,
+                     0 /* No temporal locality. */);
 #elif defined(HAVE_MM_PREFETCH)
   // Visual Studio doesn't implement __builtin_prefetch, but exposes the
   // PREFETCHNTA instruction via the _mm_prefetch intrinsic.
