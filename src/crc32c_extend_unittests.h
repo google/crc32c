@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The CRC32C Authors. All rights reserved.
+// Copyright 2017 The CRC32C Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -77,11 +77,9 @@ TEST(TESTED_EXTEND_CASE_NAME, BufferSlicing) {
     for (size_t j = i + 1; j <= 48; ++j) {
       uint32_t crc = 0;
 
-      if (i > 0)
-        crc = TESTED_EXTEND(crc, buffer, i);
+      if (i > 0) crc = TESTED_EXTEND(crc, buffer, i);
       crc = TESTED_EXTEND(crc, buffer + i, j - i);
-      if (j < 48)
-        crc = TESTED_EXTEND(crc, buffer + j, 48 - j);
+      if (j < 48) crc = TESTED_EXTEND(crc, buffer + j, 48 - j);
 
       EXPECT_EQ(static_cast<uint32_t>(0xd9963a56), crc);
     }
@@ -97,11 +95,9 @@ TEST(TESTED_EXTEND_CASE_NAME, LargeBufferSlicing) {
     for (size_t j = i + 1; j <= 2048; ++j) {
       uint32_t crc = 0;
 
-      if (i > 0)
-        crc = TESTED_EXTEND(crc, buffer, i);
+      if (i > 0) crc = TESTED_EXTEND(crc, buffer, i);
       crc = TESTED_EXTEND(crc, buffer + i, j - i);
-      if (j < 2048)
-        crc = TESTED_EXTEND(crc, buffer + j, 2048 - j);
+      if (j < 2048) crc = TESTED_EXTEND(crc, buffer + j, 2048 - j);
 
       EXPECT_EQ(static_cast<uint32_t>(0x36dcc753), crc);
     }

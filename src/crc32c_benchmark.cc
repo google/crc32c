@@ -1,4 +1,4 @@
-// Copyright (c) 2017 The CRC32C Authors. All rights reserved.
+// Copyright 2017 The CRC32C Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -71,7 +71,7 @@ BENCHMARK_REGISTER_F(CRC32CBenchmark, ArmLinux)
     ->Range(256, 16777216);  // Block size.
 #endif                       // defined(HAVE_ARM64_CRC32C)
 
-#if defined(HAVE_SSE42)  && (defined(_M_X64) || defined(__x86_64__))
+#if defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
   if (!crc32c::CanUseSse42()) {
