@@ -260,6 +260,13 @@ target_include_directories(crc32c
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+# Warnings as errors in Visual Studio for this project's targets.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set_property(TARGET crc32c APPEND PROPERTY COMPILE_OPTIONS "/WX")
+  set_property(TARGET crc32c_arm64 APPEND PROPERTY COMPILE_OPTIONS "/WX")
+  set_property(TARGET crc32c_sse42 APPEND PROPERTY COMPILE_OPTIONS "/WX")
+endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
 if(CRC32C_BUILD_TESTS)
   enable_testing()
 
@@ -286,6 +293,12 @@ if(CRC32C_BUILD_TESTS)
       "${PROJECT_SOURCE_DIR}/src/crc32c_test_main.cc"
   )
   target_link_libraries(crc32c_tests crc32c gtest)
+
+  # Warnings as errors in Visual Studio for this project's targets.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set_property(TARGET crc32c_tests APPEND PROPERTY COMPILE_OPTIONS "/WX")
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
   if(CRC32C_USE_GLOG)
     target_link_libraries(crc32c_tests glog)
   endif(CRC32C_USE_GLOG)
@@ -311,6 +324,11 @@ if(CRC32C_BUILD_BENCHMARKS)
   if(CRC32C_USE_GLOG)
     target_link_libraries(crc32c_bench glog)
   endif(CRC32C_USE_GLOG)
+
+  # Warnings as errors in Visual Studio for this project's targets.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set_property(TARGET crc32c_bench APPEND PROPERTY COMPILE_OPTIONS "/WX")
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif(CRC32C_BUILD_BENCHMARKS)
 
 if(CRC32C_INSTALL)

@@ -83,7 +83,7 @@ TEST(CRC32CTest, Crc32cStdString) {
   EXPECT_EQ(static_cast<uint32_t>(0x8a9136aa), crc32c::Crc32c(buf));
 
   for (size_t i = 0; i < 32; ++i)
-    buf[i] = static_cast<char>(0xff);
+    buf[i] = '\xff';
   EXPECT_EQ(static_cast<uint32_t>(0x62a8ab43), crc32c::Crc32c(buf));
 
   for (size_t i = 0; i < 32; ++i)
