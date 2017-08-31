@@ -236,7 +236,7 @@ uint32_t ExtendSse42(uint32_t crc, const uint8_t* data, size_t size) {
     STEP8(l64, p);
   }
 
-  l = l64;
+  l = static_cast<uint32_t>(l64);
   // Process the last few bytes.
   while (p != e) {
     STEP1;
