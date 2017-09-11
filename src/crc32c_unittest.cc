@@ -95,9 +95,8 @@ TEST(CRC32CTest, Crc32cStdString) {
   EXPECT_EQ(static_cast<uint32_t>(0x113fdb5c), crc32c::Crc32c(buf));
 }
 
-#if defined(__has_include)
+#if __cplusplus > 201402L
 #if __has_include(<string_view>)
-#if !defined(_MSC_VER) || __cplusplus >= 201703L
 
 TEST(CRC32CTest, Crc32cStdStringView) {
   uint8_t buf[32];
@@ -118,9 +117,8 @@ TEST(CRC32CTest, Crc32cStdStringView) {
   EXPECT_EQ(static_cast<uint32_t>(0x113fdb5c), crc32c::Crc32c(view));
 }
 
-#endif  // !defined(_MSC_VER) || __cplusplus >= 201703L
 #endif  // __has_include(<string_view>)
-#endif  // defined(__has_include)
+#endif  // __cplusplus > 201402L
 
 #define TESTED_EXTEND Extend
 #include "./crc32c_extend_unittests.h"

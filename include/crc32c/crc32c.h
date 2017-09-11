@@ -33,22 +33,18 @@ inline uint32_t Crc32c(const std::string& string) {
                 string.size());
 }
 
-#if defined(__has_include)
+#if __cplusplus > 201402L
 #if __has_include(<string_view>)
-// Visual Studio provides a <string_view> header even in C++11 mode. When
-// included, the header issues an #error. (C1189)
-#if !defined(_MSC_VER) || __cplusplus >= 201703L
 #include <string_view>
 
-// Comptues the CRC32C of the bytes in the string_view.
+// Computes the CRC32C of the bytes in the string_view.
 inline uint32_t Crc32c(const std::string_view& string_view) {
   return Crc32c(reinterpret_cast<const uint8_t*>(string_view.data()),
                 string_view.size());
 }
 
-#endif  // !defined(_MSC_VER) || __cplusplus >= 201703L
 #endif  // __has_include(<string_view>)
-#endif  // defined(__has_include)
+#endif  // __cplusplus > 201402L
 
 }  // namespace crc32c
 
