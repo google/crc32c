@@ -31,9 +31,11 @@ namespace crc32c {
 inline bool CanUseArm64Linux() {
 #if defined(HAVE_STRONG_GETAUXVAL) || defined(HAVE_WEAK_GETAUXVAL)
   // From 'arch/arm64/include/uapi/asm/hwcap.h' in Linux kernel source code.
-  constexpr unsigned long kHwCapCrc32 = 1 << 7;
+  constexpr unsigned long kHWCAP_PMULL = 1 << 4;
+  constexpr unsigned long kHWCAP_CRC32 = 1 << 7;
   unsigned long hwcap = (&getauxval != nullptr) ? getauxval(AT_HWCAP) : 0;
-  return (hwcap & kHwCapCrc32) != 0;
+  return (hwcap & (kHWCAP_PMULL | kHWCAP_CRC32)) ==
+         (kHWCAP_PMULL | kHWCAP_CRC32);
 #else
   return false;
 #endif  // defined(HAVE_STRONG_GETAUXVAL) || defined(HAVE_WEAK_GETAUXVAL)
