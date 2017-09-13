@@ -20,7 +20,9 @@
 
 // Define to 1 if targeting ARM and the compiler has the __crc32c{b,h,w,d} and
 // the vmull_p64 intrinsics.
-#cmakedefine HAVE_ARM64_CRC32C 1
+// Temporarily disabled to avoid crash on Qualcomm Snapdragon 410 MSM8916.
+// https://bugs.chromium.org/p/chromium/issues/detail?id=763848
+#cmakedefine HAVE_ARM64_CRC32C 0
 
 // Define to 1 if the system libraries have the getauxval function in the
 // <sys/auxv.h> header. Should be true on Linux and Android API level 20+.
