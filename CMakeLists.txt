@@ -1,3 +1,7 @@
+# Copyright 2017 The CRC32C Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file. See the AUTHORS file for names of contributors.
+
 cmake_minimum_required(VERSION 3.1)
 project(Crc32c VERSION 0.1.0 LANGUAGES C CXX)
 
@@ -51,7 +55,7 @@ endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 option(CRC32C_BUILD_TESTS "Build CRC32C's unit tests" ON)
 option(CRC32C_BUILD_BENCHMARKS "Build CRC32C's benchmarks" ON)
 option(CRC32C_USE_GLOG "Build CRC32C's tests with Google Logging" ON)
-option(CRC32C_INSTALL "Install CRC32's header and library" ON)
+option(CRC32C_INSTALL "Install CRC32C's header and library" ON)
 
 include(TestBigEndian)
 test_big_endian(BYTE_ORDER_BIG_ENDIAN)
