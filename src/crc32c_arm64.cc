@@ -16,7 +16,7 @@
 #include "./crc32c_internal.h"
 #include "crc32c/crc32c_config.h"
 
-#if defined(HAVE_ARM64_CRC32C)
+#if HAVE_ARM64_CRC32C
 
 #include <arm_acle.h>
 #include <arm_neon.h>
@@ -121,4 +121,4 @@ uint32_t ExtendArm64(uint32_t crc, const uint8_t *buf, size_t size) {
 
 }  // namespace crc32c
 
-#endif  // defined(HAVE_ARM64_CRC32C)
+#endif  // HAVE_ARM64_CRC32C

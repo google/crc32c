@@ -10,7 +10,7 @@
 
 #include "crc32c/crc32c_config.h"
 
-#if defined(HAVE_MM_PREFETCH)
+#if HAVE_MM_PREFETCH
 
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -18,25 +18,25 @@
 #include <xmmintrin.h>
 #endif  // defined(_MSC_VER)
 
-#endif  // defined(HAVE_MM_PREFETCH)
+#endif  // HAVE_MM_PREFETCH
 
 namespace crc32c {
 
 // Ask the hardware to prefetch the data at the given address into the L1 cache.
 inline void RequestPrefetch(const uint8_t* address) {
-#if defined(HAVE_BUILTIN_PREFETCH)
+#if HAVE_BUILTIN_PREFETCH
   // Clang and GCC implement the __builtin_prefetch non-standard extension,
   // which maps to the best instruction on the target architecture.
   __builtin_prefetch(reinterpret_cast<const char*>(address), 0 /* Read only. */,
                      0 /* No temporal locality. */);
-#elif defined(HAVE_MM_PREFETCH)
+#elif HAVE_MM_PREFETCH
   // Visual Studio doesn't implement __builtin_prefetch, but exposes the
   // PREFETCHNTA instruction via the _mm_prefetch intrinsic.
   _mm_prefetch(reinterpret_cast<const char*>(address), _MM_HINT_NTA);
 #else
   // No prefetch support. Silence compiler warnings.
   (void)address;
-#endif  // defined(HAVE_BUILTIN_PREFETCH)
+#endif  // HAVE_BUILTIN_PREFETCH
 }
 
 }  // namespace crc32c
