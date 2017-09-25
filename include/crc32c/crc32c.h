@@ -1,15 +1,47 @@
-// Copyright 2017 The CRC32C Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file. See the AUTHORS file for names of contributors.
+/* Copyright 2017 The CRC32C Authors. All rights reserved.
+   Use of this source code is governed by a BSD-style license that can be
+   found in the LICENSE file. See the AUTHORS file for names of contributors. */
 
 #ifndef CRC32C_CRC32C_H_
 #define CRC32C_CRC32C_H_
 
-// The API exported by the CRC32C project.
+/* The API exported by the CRC32C project. */
+
+#if defined(__cplusplus)
 
 #include <cstddef>
 #include <cstdint>
 #include <string>
+
+#else  /* !defined(__cplusplus) */
+
+#include <stddef.h>
+#include <stdint.h>
+
+#endif  /* !defined(__cplusplus) */
+
+
+/* The C API. */
+
+#if defined(__cplusplus)
+extern "C" {
+#endif  /* defined(__cplusplus) */
+
+/* Extends "crc" with the CRC32C of "count" bytes in the buffer pointed by
+   "data" */
+uint32_t crc32c_extend(uint32_t crc, const uint8_t* data, size_t count);
+
+/* Computes the CRC32C of "count" bytes in the buffer pointed by "data". */
+uint32_t crc32c_value(const uint8_t* data, size_t count);
+
+#ifdef __cplusplus
+}  /* end extern "C" */
+#endif  /* defined(__cplusplus) */
+
+
+/* The C++ API. */
+
+#if defined(__cplusplus)
 
 namespace crc32c {
 
@@ -48,5 +80,6 @@ inline uint32_t Crc32c(const std::string_view& string_view) {
 
 }  // namespace crc32c
 
+#endif  /* defined(__cplusplus) */
 
 #endif  // CRC32C_CRC32C_H_

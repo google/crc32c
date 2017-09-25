@@ -54,4 +54,5 @@ before_script:
 
 script:
 - out/crc32c_tests
+- out/crc32c_capi_tests
 - out/crc32c_bench
