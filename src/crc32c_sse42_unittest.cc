@@ -4,10 +4,10 @@
 
 #include "./crc32c_sse42.h"
 
-#if defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
+#if HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
 
 #define TESTED_EXTEND ExtendSse42
 #include "./crc32c_extend_unittests.h"
 #undef TESTED_EXTEND
 
-#endif  // defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
+#endif  // HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))

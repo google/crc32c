@@ -19,7 +19,7 @@
 #include "./crc32c_round_up.h"
 #include "crc32c/crc32c_config.h"
 
-#if defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
+#if HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
 
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -253,4 +253,4 @@ uint32_t ExtendSse42(uint32_t crc, const uint8_t* data, size_t size) {
 
 }  // namespace crc32c
 
-#endif  // defined(HAVE_SSE42) && (defined(_M_X64) || defined(__x86_64__))
+#endif  // HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
