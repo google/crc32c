@@ -5,6 +5,11 @@
 cmake_minimum_required(VERSION 3.1)
 project(Crc32c VERSION 0.1.0 LANGUAGES C CXX)
 
+# This project can use C11, but will gracefully decay down to C89.
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED OFF)
+set(CMAKE_C_EXTENSIONS OFF)
+
 # This project requires C++11.
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -308,6 +313,20 @@ if(CRC32C_BUILD_TESTS)
   endif(CRC32C_USE_GLOG)
 
   add_test(NAME crc32c_tests COMMAND crc32c_tests)
+
+  add_executable(crc32c_capi_tests "")
+  target_sources(crc32c_capi_tests
+    PRIVATE
+      "${PROJECT_SOURCE_DIR}/src/crc32c_capi_unittest.c"
+  )
+  target_link_libraries(crc32c_capi_tests crc32c)
+
+  # Warnings as errors in Visual Studio for this project's targets.
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set_property(TARGET crc32c_capi_tests APPEND PROPERTY COMPILE_OPTIONS "/WX")
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+  add_test(NAME crc32c_capi_tests COMMAND crc32c_capi_tests)
 endif(CRC32C_BUILD_TESTS)
 
 if(CRC32C_BUILD_BENCHMARKS)

@@ -39,4 +39,5 @@ build_script:
 
 test_script:
   - out\%CONFIGURATION%\crc32c_tests.exe
+  - out\%CONFIGURATION%\crc32c_capi_tests.exe
   - out\%CONFIGURATION%\crc32c_bench.exe

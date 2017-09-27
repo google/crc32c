@@ -27,4 +27,13 @@ uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count) {
   return ExtendPortable(crc, data, count);
 }
 
+extern "C" uint32_t crc32c_extend(uint32_t crc, const uint8_t* data,
+                                  size_t count) {
+  return crc32c::Extend(crc, data, count);
+}
+
+extern "C" uint32_t crc32c_value(const uint8_t* data, size_t count) {
+  return crc32c::Crc32c(data, count);
+}
+
 }  // namespace crc32c
