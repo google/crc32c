@@ -365,7 +365,7 @@ if(CRC32C_INSTALL)
   install(
     FILES
       "${PROJECT_SOURCE_DIR}/include/crc32c/crc32c.h"
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/crc32c"
   )
 
   include(CMakePackageConfigHelpers)
