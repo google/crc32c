@@ -36,7 +36,7 @@ class CRC32CBenchmark : public benchmark::Fixture {
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Public)(benchmark::State& state) {
   uint32_t crc = 0;
-  while (state.KeepRunning())
+  for (auto _ : state)
     crc = crc32c::Extend(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
@@ -46,7 +46,7 @@ BENCHMARK_REGISTER_F(CRC32CBenchmark, Public)
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Portable)(benchmark::State& state) {
   uint32_t crc = 0;
-  while (state.KeepRunning())
+  for (auto _ : state)
     crc = crc32c::ExtendPortable(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
@@ -63,7 +63,7 @@ BENCHMARK_DEFINE_F(CRC32CBenchmark, ArmLinux)(benchmark::State& state) {
   }
 
   uint32_t crc = 0;
-  while (state.KeepRunning())
+  for (auto _ : state)
     crc = crc32c::ExtendArm64(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
@@ -82,7 +82,7 @@ BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
   }
 
   uint32_t crc = 0;
-  while (state.KeepRunning())
+  for (auto _ : state)
     crc = crc32c::ExtendSse42(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
