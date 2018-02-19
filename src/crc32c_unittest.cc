@@ -10,6 +10,8 @@
 
 #include "gtest/gtest.h"
 
+#include "./crc32c_extend_unittests.h"
+
 TEST(Crc32CTest, Crc32c) {
   // From rfc3720 section B.4.
   uint8_t buf[32];
@@ -42,15 +44,17 @@ TEST(Crc32CTest, Crc32c) {
             crc32c::Crc32c(data, sizeof(data)));
 }
 
-TEST(CRC32CTest, Extend) {
-  const uint8_t* hello_space_world =
-      reinterpret_cast<const uint8_t*>("hello world");
-  const uint8_t* hello_space = reinterpret_cast<const uint8_t*>("hello ");
-  const uint8_t* world = reinterpret_cast<const uint8_t*>("world");
+namespace crc32c {
 
-  EXPECT_EQ(crc32c::Crc32c(hello_space_world, 11),
-            crc32c::Extend(crc32c::Crc32c(hello_space, 6), world, 5));
-}
+struct ApiTestTraits {
+  static uint32_t Extend(uint32_t crc, const uint8_t* data, size_t count) {
+    return ::crc32c::Extend(crc, data, count);
+  }
+};
+
+INSTANTIATE_TYPED_TEST_CASE_P(Api, ExtendTest, ApiTestTraits);
+
+}  // namespace crc32c
 
 TEST(CRC32CTest, Crc32cCharPointer) {
   char buf[32];
