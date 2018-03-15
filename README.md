@@ -77,15 +77,15 @@ apm install autocomplete-plus build build-cmake clang-format language-cmake \
 The following commands build and install the project.
 
 ```bash
-mkdir out
-cd out
+mkdir build
+cd build
 cmake -DCRC32C_BUILD_TESTS=0 -DCRC32C_BUILD_BENCHMARKS=0 .. && make all install
 ```
 
 
 ## Development
 
-The following command (when executed from `out/`) (re)builds the project and
+The following command (when executed from `build/`) (re)builds the project and
 runs the tests.
 
 ```bash
