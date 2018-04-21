@@ -23,7 +23,7 @@
 class CRC32CBenchmark : public benchmark::Fixture {
  public:
   void SetUp(const benchmark::State& state) override {
-    block_size_ = state.range(0);
+    block_size_ = static_cast<size_t>(state.range(0));
     block_data_ = std::string(block_size_, 'x');
     block_buffer_ = reinterpret_cast<const uint8_t*>(block_data_.data());
   }
