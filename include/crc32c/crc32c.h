@@ -65,9 +65,13 @@ inline uint32_t Crc32c(const std::string& string) {
                 string.size());
 }
 
+}  // namespace crc32c
+
 #if __cplusplus > 201402L
 #if __has_include(<string_view>)
 #include <string_view>
+
+namespace crc32c {
 
 // Computes the CRC32C of the bytes in the string_view.
 inline uint32_t Crc32c(const std::string_view& string_view) {
@@ -75,10 +79,10 @@ inline uint32_t Crc32c(const std::string_view& string_view) {
                 string_view.size());
 }
 
+}  // namespace crc32c
+
 #endif  // __has_include(<string_view>)
 #endif  // __cplusplus > 201402L
-
-}  // namespace crc32c
 
 #endif  /* defined(__cplusplus) */
 
