@@ -30,8 +30,8 @@ addons:
     - llvm-toolchain-trusty-6.0
     packages:
     - cmake
-    - gcc-7
-    - g++-7
+    - gcc-8
+    - g++-8
     - clang-6.0
 
 install:
@@ -40,9 +40,9 @@ install:
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 # https://github.com/Homebrew/brew/issues/1742
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then rm -f /usr/local/include/c++ ; fi
-- if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc@7; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc@8; fi
 # /usr/bin/gcc is stuck to old versions by on both Linux and OSX.
-- if [ "$CXX" = "g++" ]; then export CXX="g++-7" CC="gcc-7"; fi
+- if [ "$CXX" = "g++" ]; then export CXX="g++-8" CC="gcc-8"; fi
 - echo ${CC}
 - echo ${CXX}
 - ${CXX} --version
