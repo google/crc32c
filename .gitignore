@@ -2,7 +2,10 @@
 *.sw*
 .DS_Store
 /.vscode
+*~
 
 # Build directory.
 build/
 out/
+.build/
+bazel-*

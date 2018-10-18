@@ -290,6 +290,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set_property(TARGET crc32c_sse42 APPEND PROPERTY COMPILE_OPTIONS "/WX")
 endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
+# Generate the .bzl files from the CMake definitions, so we do not have to
+# maintain the list of sources in two places.
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+include(CreateBazelConfig)
+create_bazel_config(crc32c_sse42)
+create_bazel_config(crc32c_arm64)
+create_bazel_config(crc32c)
+
 if(CRC32C_BUILD_TESTS)
   enable_testing()
 
@@ -325,6 +333,11 @@ if(CRC32C_BUILD_TESTS)
   )
   target_link_libraries(crc32c_tests crc32c gtest)
 
+  # Generate the .bzl file with the list of sources, so we do not have to
+  # maintain the list in two places.
+  get_target_property(crc32c_test_sources crc32c_tests SOURCES)
+  export_list_to_bazel("crc32c_test.bzl" crc32c_test_sources)
+  
   # Warnings as errors in Visual Studio for this project's targets.
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set_property(TARGET crc32c_tests APPEND PROPERTY COMPILE_OPTIONS "/WX")

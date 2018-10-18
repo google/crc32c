@@ -55,13 +55,8 @@ install:
 - ${CXX} --version
 - cmake --version
 
-before_script:
-- mkdir -p build && cd build
-- cmake .. -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-- cmake --build .
-- cd ..
-
 script:
-- build/crc32c_tests
-- build/crc32c_capi_tests
-- build/crc32c_bench
+- cmake -H. -B.build -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+- cmake --build .build
+- (cd .build && ctest --output-on-failure)
+- (cd .build && ./crc32c_bench)
