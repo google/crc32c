@@ -258,6 +258,7 @@ add_library(crc32c ""
   $<TARGET_OBJECTS:crc32c_arm64>
   $<TARGET_OBJECTS:crc32c_sse42>
 )
+set_property(TARGET crc32c PROPERTY VERSION "${Crc32c_VERSION}")
 target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
