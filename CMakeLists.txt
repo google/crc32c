@@ -15,6 +15,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# When compiling a Windows DLL export all symbols, just like Unix shared
+# objects do.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 # https://github.com/izenecloud/cmake/blob/master/SetCompilerWarningAll.cmake
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # Use the highest warning level for Visual Studio.
