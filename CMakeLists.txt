@@ -15,6 +15,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(BUILD_SHARED_LIBS OR CMAKE_POSITION_INDEPENDENT_CODE)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # https://github.com/izenecloud/cmake/blob/master/SetCompilerWarningAll.cmake
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # Use the highest warning level for Visual Studio.
@@ -229,8 +233,10 @@ if(HAVE_ARM64_CRC32C)
   endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif(HAVE_ARM64_CRC32C)
 # CMake only enables PIC by default in SHARED and MODULE targets.
-set_property(TARGET crc32c_arm64
-    PROPERTY POSITION_INDEPENDENT_CODE "${BUILD_SHARED_LIBS}")
+if( BUILD_SHARED_LIBS OR CMAKE_POSITION_INDEPENDENT_CODE )
+  set_property(TARGET crc32c_arm64
+    PROPERTY POSITION_INDEPENDENT_CODE ON )
+endif()
 
 # SSE4.2 code is built separately, so we don't accidentally compile unsupported
 # instructions into code that gets run without SSE4.2 support.
@@ -249,8 +255,10 @@ if(HAVE_SSE42)
   endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif(HAVE_SSE42)
 # CMake only enables PIC by default in SHARED and MODULE targets.
-set_property(TARGET crc32c_sse42
-    PROPERTY POSITION_INDEPENDENT_CODE "${BUILD_SHARED_LIBS}")
+if( BUILD_SHARED_LIBS OR CMAKE_POSITION_INDEPENDENT_CODE )
+  set_property(TARGET crc32c_sse42
+    PROPERTY POSITION_INDEPENDENT_CODE ON )
+endif()
 
 add_library(crc32c ""
   # TODO(pwnall): Move the TARGET_OBJECTS generator expressions to the PRIVATE
@@ -258,6 +266,12 @@ add_library(crc32c ""
   $<TARGET_OBJECTS:crc32c_arm64>
   $<TARGET_OBJECTS:crc32c_sse42>
 )
+
+if( BUILD_SHARED_LIBS OR CMAKE_POSITION_INDEPENDENT_CODE )
+  set_property(TARGET crc32c
+    PROPERTY POSITION_INDEPENDENT_CODE ON )
+endif()
+
 target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
