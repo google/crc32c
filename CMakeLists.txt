@@ -15,6 +15,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(BUILD_SHARED_LIBS OR CMAKE_POSITION_INDEPENDENT_CODE)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # https://github.com/izenecloud/cmake/blob/master/SetCompilerWarningAll.cmake
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # Use the highest warning level for Visual Studio.
@@ -262,6 +266,12 @@ add_library(crc32c ""
   $<TARGET_OBJECTS:crc32c_arm64>
   $<TARGET_OBJECTS:crc32c_sse42>
 )
+
+if( BUILD_SHARED_LIBS OR CMAKE_POSITION_INDEPENDENT_CODE )
+  set_property(TARGET crc32c
+    PROPERTY POSITION_INDEPENDENT_CODE ON )
+endif()
+
 target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"

@@ -19,6 +19,9 @@ env:
   - GLOG=0 SHARED_LIB=0 BUILD_TYPE=RelWithDebInfo
   - GLOG=0 SHARED_LIB=1 BUILD_TYPE=Debug
   - GLOG=0 SHARED_LIB=1 BUILD_TYPE=RelWithDebInfo
+  - GLOG=0 SHARED_LIB=0 PIC=1 BUILD_TYPE=Debug
+  - GLOG=0 SHARED_LIB=0 PIC=1 BUILD_TYPE=RelWithDebInfo
+
 
 matrix:
   exclude:
@@ -62,7 +65,7 @@ install:
 before_script:
 - mkdir -p build && cd build
 - cmake .. -G Ninja -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-           -DBUILD_SHARED_LIBS=$SHARED_LIB
+           -DBUILD_SHARED_LIBS=$SHARED_LIB -DCMAKE_POSITION_INDEPENDENT_CODE=$PIC
 - cmake --build .
 - cd ..
 
