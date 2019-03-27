@@ -391,6 +391,12 @@ if(CRC32C_INSTALL)
   )
 
   include(CMakePackageConfigHelpers)
+  set(cmake_config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c")
+  configure_package_config_file(
+      Crc32cConfig.cmake.in
+      Crc32cConfig.cmake
+      INSTALL_DESTINATION "${cmake_config_install_dir}"
+  )
   write_basic_package_version_file(
       "${PROJECT_BINARY_DIR}/Crc32cConfigVersion.cmake"
       COMPATIBILITY SameMajorVersion
@@ -398,12 +404,12 @@ if(CRC32C_INSTALL)
   install(
     EXPORT Crc32cTargets
     NAMESPACE Crc32c::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
+    DESTINATION "${cmake_config_install_dir}"
   )
   install(
     FILES
-      "${PROJECT_SOURCE_DIR}/Crc32cConfig.cmake"
+      "${PROJECT_BINARY_DIR}/Crc32cConfig.cmake"
       "${PROJECT_BINARY_DIR}/Crc32cConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
+    DESTINATION "${cmake_config_install_dir}"
   )
 endif(CRC32C_INSTALL)
