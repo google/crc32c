@@ -62,8 +62,9 @@ install:
 before_script:
 - mkdir -p build && cd build
 - cmake .. -G Ninja -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-           -DBUILD_SHARED_LIBS=$SHARED_LIB
+           -DBUILD_SHARED_LIBS=$SHARED_LIB -DCMAKE_INSTALL_PREFIX=$HOME/.local
 - cmake --build .
+- cmake --build . --target install
 - cd ..
 
 script:
