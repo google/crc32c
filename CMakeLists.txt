@@ -181,7 +181,7 @@ if(CRC32C_USE_GLOG)
   # CPU cycles on the CI.
   set(BUILD_TESTING_SAVED "${BUILD_TESTING}")
   set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-  add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/glog" EXCLUDE_FROM_ALL)
+  add_subdirectory("third_party/glog" EXCLUDE_FROM_ALL)
   set(BUILD_TESTING "${BUILD_TESTING_SAVED}" CACHE BOOL "" FORCE)
 
   # glog triggers deprecation warnings on OSX.
@@ -205,7 +205,7 @@ if(CRC32C_USE_GLOG)
 endif(CRC32C_USE_GLOG)
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/src/crc32c_config.h.in"
+  "src/crc32c_config.h.in"
   "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
 )
 
@@ -217,8 +217,8 @@ add_library(crc32c_arm64 OBJECT "")
 target_sources(crc32c_arm64
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64.cc"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64.h"
+    "src/crc32c_arm64.cc"
+    "src/crc32c_arm64.h"
 )
 if(HAVE_ARM64_CRC32C)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -240,8 +240,8 @@ add_library(crc32c_sse42 OBJECT "")
 target_sources(crc32c_sse42
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.cc"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
+    "src/crc32c_sse42.cc"
+    "src/crc32c_sse42.h"
 )
 if(HAVE_SSE42)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -268,16 +268,16 @@ add_library(crc32c ""
 target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_arm64_linux_check.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_internal.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_portable.cc"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_prefetch.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_read_le.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_round_up.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_check.h"
-    "${PROJECT_SOURCE_DIR}/src/crc32c.cc"
+    "src/crc32c_arm64.h"
+    "src/crc32c_arm64_linux_check.h"
+    "src/crc32c_internal.h"
+    "src/crc32c_portable.cc"
+    "src/crc32c_prefetch.h"
+    "src/crc32c_read_le.h"
+    "src/crc32c_round_up.h"
+    "src/crc32c_sse42.h"
+    "src/crc32c_sse42_check.h"
+    "src/crc32c.cc"
 
   # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
   $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
@@ -309,7 +309,7 @@ if(CRC32C_BUILD_TESTS)
   set(install_gmock OFF)
 
   # This project is tested using GoogleTest.
-  add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/googletest")
+  add_subdirectory("third_party/googletest")
 
   # GoogleTest triggers a missing field initializers warning.
   if(CRC32C_HAVE_NO_MISSING_FIELD_INITIALIZERS)
@@ -323,15 +323,15 @@ if(CRC32C_BUILD_TESTS)
   target_sources(crc32c_tests
     PRIVATE
       "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_arm64_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_extend_unittests.h"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_portable_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_prefetch_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_read_le_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_round_up_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_sse42_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_unittest.cc"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_test_main.cc"
+      "src/crc32c_arm64_unittest.cc"
+      "src/crc32c_extend_unittests.h"
+      "src/crc32c_portable_unittest.cc"
+      "src/crc32c_prefetch_unittest.cc"
+      "src/crc32c_read_le_unittest.cc"
+      "src/crc32c_round_up_unittest.cc"
+      "src/crc32c_sse42_unittest.cc"
+      "src/crc32c_unittest.cc"
+      "src/crc32c_test_main.cc"
   )
   target_link_libraries(crc32c_tests crc32c gtest)
 
@@ -349,7 +349,7 @@ if(CRC32C_BUILD_TESTS)
   add_executable(crc32c_capi_tests "")
   target_sources(crc32c_capi_tests
     PRIVATE
-      "${PROJECT_SOURCE_DIR}/src/crc32c_capi_unittest.c"
+      "src/crc32c_capi_unittest.c"
   )
   target_link_libraries(crc32c_capi_tests crc32c)
 
@@ -366,14 +366,14 @@ if(CRC32C_BUILD_BENCHMARKS)
   target_sources(crc32c_bench
     PRIVATE
       "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-      "${PROJECT_SOURCE_DIR}/src/crc32c_benchmark.cc"
+      "src/crc32c_benchmark.cc"
   )
   target_link_libraries(crc32c_bench crc32c)
 
   # This project uses Google benchmark for benchmarking.
   set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
   set(BENCHMARK_ENABLE_EXCEPTIONS OFF CACHE BOOL "" FORCE)
-  add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/benchmark")
+  add_subdirectory("third_party/benchmark")
   target_link_libraries(crc32c_bench benchmark)
 
   if(CRC32C_USE_GLOG)
@@ -395,7 +395,7 @@ if(CRC32C_INSTALL)
   )
   install(
     FILES
-      "${PROJECT_SOURCE_DIR}/include/crc32c/crc32c.h"
+      "include/crc32c/crc32c.h"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/crc32c"
   )
 
@@ -411,7 +411,7 @@ if(CRC32C_INSTALL)
   )
   install(
     FILES
-      "${PROJECT_SOURCE_DIR}/Crc32cConfig.cmake"
+      "Crc32cConfig.cmake"
       "${PROJECT_BINARY_DIR}/Crc32cConfigVersion.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
   )
