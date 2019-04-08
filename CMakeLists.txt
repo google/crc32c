@@ -267,11 +267,6 @@ add_library(crc32c ""
   $<TARGET_OBJECTS:crc32c_sse42>
 )
 
-if( BUILD_SHARED_LIBS )
-  set_property(TARGET crc32c
-    PROPERTY POSITION_INDEPENDENT_CODE ON )
-endif()
-
 target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
