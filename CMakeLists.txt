@@ -2,8 +2,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-cmake_minimum_required(VERSION 3.1)
-project(Crc32c VERSION 0.1.0 LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.9)
+set(description
+"CRC32C implementation with support for CPU-specific acceleration \
+instructions.")
+project(Crc32c VERSION 0.1.0 LANGUAGES C CXX
+        DESCRIPTION "${description}")
 
 # This project can use C11, but will gracefully decay down to C89.
 set(CMAKE_C_STANDARD 11)
@@ -209,6 +213,12 @@ configure_file(
   "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
 )
 
+configure_file(
+  "${PROJECT_SOURCE_DIR}/crc32c.pc.in"
+  "${PROJECT_BINARY_DIR}/crc32c.pc"
+  @ONLY
+)
+
 include_directories("${PROJECT_BINARY_DIR}/include")
 
 # ARM64 CRC32C code is built separately, so we don't accidentally compile
@@ -405,5 +415,10 @@ if(CRC32C_INSTALL)
       "${PROJECT_SOURCE_DIR}/Crc32cConfig.cmake"
       "${PROJECT_BINARY_DIR}/Crc32cConfigVersion.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
+  )
+  install(
+    FILES
+      ${CMAKE_BINARY_DIR}/crc32c.pc
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig
   )
 endif(CRC32C_INSTALL)
