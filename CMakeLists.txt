@@ -231,7 +231,7 @@ endif(HAVE_ARM64_CRC32C)
 
 # CMake only enables PIC by default in SHARED and MODULE targets.
 if(BUILD_SHARED_LIBS)
-  set_property(TARGET crc32c_arm64 PROPERTY POSITION_INDEPENDENT_CODE "True")
+  set_property(TARGET crc32c_arm64 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif(BUILD_SHARED_LIBS)
 
 # SSE4.2 code is built separately, so we don't accidentally compile unsupported
@@ -253,7 +253,7 @@ endif(HAVE_SSE42)
 
 # CMake only enables PIC by default in SHARED and MODULE targets.
 if(BUILD_SHARED_LIBS)
-  set_property(TARGET crc32c_sse42 PROPERTY POSITION_INDEPENDENT_CODE "True")
+  set_property(TARGET crc32c_sse42 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif(BUILD_SHARED_LIBS)
 
 add_library(crc32c ""
