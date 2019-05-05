@@ -3,7 +3,7 @@
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 cmake_minimum_required(VERSION 3.1)
-project(Crc32c VERSION 0.1.0 LANGUAGES C CXX)
+project(Crc32c VERSION 1.1.0 LANGUAGES C CXX)
 
 # This project can use C11, but will gracefully decay down to C89.
 set(CMAKE_C_STANDARD 11)
@@ -286,6 +286,9 @@ target_include_directories(crc32c
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+set_target_properties(crc32c
+  PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
 
 # Warnings as errors in Visual Studio for this project's targets.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
