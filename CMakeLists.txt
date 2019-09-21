@@ -62,6 +62,7 @@ option(CRC32C_BUILD_TESTS "Build CRC32C's unit tests" ON)
 option(CRC32C_BUILD_BENCHMARKS "Build CRC32C's benchmarks" ON)
 option(CRC32C_USE_GLOG "Build CRC32C's tests with Google Logging" ON)
 option(CRC32C_INSTALL "Install CRC32C's header and library" ON)
+option(CRC32C_FUZZING_BUILD "Build CRC32C's fuzzer" OFF)
 
 include(TestBigEndian)
 test_big_endian(BYTE_ORDER_BIG_ENDIAN)
@@ -414,3 +415,22 @@ if(CRC32C_INSTALL)
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Crc32c"
   )
 endif(CRC32C_INSTALL)
+
+if(CRC32C_FUZZING_BUILD)
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    message(WARNING "Fuzzing builds are only supported with Clang")
+  endif (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  if (NOT DEFINED ENV{LIB_FUZZING_ENGINE})
+    message(WARNING "Fuzzing builds require LIB_FUZZING_ENGINE environment \
+variable to be set")
+  endif (NOT DEFINED ENV{LIB_FUZZING_ENGINE})
+endif(CRC32C_FUZZING_BUILD)
+
+if(CRC32C_FUZZING_BUILD)
+  add_executable(crc32c_fuzzer "")
+  target_sources(crc32c_fuzzer
+          PRIVATE
+          "${PROJECT_SOURCE_DIR}/src/crc32c_fuzzer.cc"
+          )
+  target_link_libraries(crc32c_fuzzer crc32c $ENV{LIB_FUZZING_ENGINE})
+endif(CRC32C_FUZZING_BUILD)

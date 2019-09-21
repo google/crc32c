@@ -54,7 +54,13 @@ install:
 # below don't work on macOS. Fortunately, the path change above makes the
 # default values (clang and clang++) resolve to the correct compiler on macOS.
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-    if [ "$CXX" = "clang++" ]; then export CXX="clang++-8" CC="clang-8"; fi;
+    if [ "$CXX" = "clang++" ]; then
+      export CXX="clang++-8" CC="clang-8" \
+             FUZZING=1 \
+             LIB_FUZZING_ENGINE="-fsanitize=fuzzer";
+    else
+      export FUZZING=0;
+    fi
   fi
 - echo ${CC}
 - echo ${CXX}
@@ -63,8 +69,14 @@ install:
 
 before_script:
 - mkdir -p build && cd build
-- cmake .. -G Ninja -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-           -DBUILD_SHARED_LIBS=$SHARED_LIB
+- if [ ${FUZZING} -eq 1 ]; then
+    cmake .. -G Ninja -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+    -DBUILD_SHARED_LIBS=NO -DCRC32C_FUZZING_BUILD=ON
+    -DCMAKE_CXX_FLAGS="-fsanitize=address,fuzzer-no-link";
+  else
+    cmake .. -G Ninja -DCRC32C_USE_GLOG=$GLOG -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+           -DBUILD_SHARED_LIBS=$SHARED_LIB;
+  fi
 - cmake --build .
 - cd ..
 
