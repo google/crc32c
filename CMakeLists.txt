@@ -256,6 +256,8 @@ if(BUILD_SHARED_LIBS)
   set_property(TARGET crc32c_sse42 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif(BUILD_SHARED_LIBS)
 
+include(GNUInstallDirs)
+
 add_library(crc32c ""
   # TODO(pwnall): Move the TARGET_OBJECTS generator expressions to the PRIVATE
   # section of target_sources when cmake_minimum_required becomes 3.9 or above.
@@ -384,7 +386,6 @@ if(CRC32C_BUILD_BENCHMARKS)
 endif(CRC32C_BUILD_BENCHMARKS)
 
 if(CRC32C_INSTALL)
-  include(GNUInstallDirs)
   install(TARGETS crc32c
     EXPORT Crc32cTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
