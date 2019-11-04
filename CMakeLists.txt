@@ -256,6 +256,7 @@ if(BUILD_SHARED_LIBS)
   set_property(TARGET crc32c_sse42 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 endif(BUILD_SHARED_LIBS)
 
+# Must be included before CMAKE_INSTALL_INCLUDEDIR is used.
 include(GNUInstallDirs)
 
 add_library(crc32c ""
