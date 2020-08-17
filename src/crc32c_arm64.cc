@@ -72,7 +72,7 @@ uint32_t ExtendArm64(uint32_t crc, const uint8_t *buf, size_t size) {
   const poly64_t k0 = 0x8d96551c, k1 = 0xbd6f81f8, k2 = 0xdcb17aa4;
 
   crc = crc ^ kCRC32Xor;
-  const uint8_t *p = reinterpret_cast<const uint8_t *>(buf);
+  const uint8_t *p = buf;
 
   while (length >= KBYTES) {
     crc0 = crc;
