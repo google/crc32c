@@ -275,7 +275,7 @@ target_sources(crc32c
   PRIVATE
     "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
     "src/crc32c_arm64.h"
-    "src/crc32c_arm64_linux_check.h"
+    "src/crc32c_arm64_check.h"
     "src/crc32c_internal.h"
     "src/crc32c_portable.cc"
     "src/crc32c_prefetch.h"
