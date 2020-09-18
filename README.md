@@ -122,3 +122,18 @@ adb shell chmod +x /data/local/tmp/crc32c_tests
 adb shell 'cd /data/local/tmp && ./crc32c_tests'
 adb shell rm /data/local/tmp/crc32c_tests
 ```
+
+
+### iOS testing
+
+The following command builds the project against the iOS SDK, which is useful
+for benchmarking against Apple's ARM chips ("Apple Sillicon").
+
+```bash
+cmake .. -GXcode \
+    -DCMAKE_SYSTEM_NAME=iOS \
+    -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=13 \
+    -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO DCRC32C_USE_GLOG=0 \
+    -DCMAKE_BUILD_TYPE=Release && cmake --build .
+```
