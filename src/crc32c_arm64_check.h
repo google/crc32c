@@ -38,7 +38,10 @@ inline bool CanUseArm64Crc32() {
   // From 'arch/arm64/include/uapi/asm/hwcap.h' in Linux kernel source code.
   constexpr unsigned long kHWCAP_PMULL = 1 << 4;
   constexpr unsigned long kHWCAP_CRC32 = 1 << 7;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic warning "-Waddress"
   unsigned long hwcap = (&getauxval != nullptr) ? getauxval(AT_HWCAP) : 0;
+#pragma GCC diagnostic pop
   return (hwcap & (kHWCAP_PMULL | kHWCAP_CRC32)) ==
          (kHWCAP_PMULL | kHWCAP_CRC32);
 #elif defined(__APPLE__)
