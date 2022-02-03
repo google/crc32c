@@ -364,8 +364,8 @@ if(CRC32C_BUILD_TESTS)
     set_property(TARGET crc32c_capi_tests APPEND PROPERTY COMPILE_OPTIONS "/WX")
 
     # The Windows SDK version currently on CI produces warnings when some
-    # headers are #included using C99 compatibity mode or above. This workaround
-    # can be removed once the Windows SDK on our CI is upgraded.
+    # headers are #included using C99 compatibility mode or above. This
+    # workaround can be removed once the Windows SDK on our CI is upgraded.
     set_property(TARGET crc32c_capi_tests
         APPEND PROPERTY COMPILE_OPTIONS "/wd5105")
   endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
