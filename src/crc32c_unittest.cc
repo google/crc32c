@@ -119,6 +119,8 @@ TEST(CRC32CTest, Crc32cStdStringView) {
   for (size_t i = 0; i < 32; ++i)
     buf[i] = static_cast<uint8_t>(31 - i);
   EXPECT_EQ(static_cast<uint32_t>(0x113fdb5c), crc32c::Crc32c(view));
+
+  EXPECT_EQ(static_cast<uint32_t>(0x691daa2f), crc32c::Crc32c("Hello World"));
 }
 
 #endif  // __has_include(<string_view>)

@@ -11,7 +11,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <string>
 
 #else  /* !defined(__cplusplus) */
 
@@ -59,30 +58,35 @@ inline uint32_t Crc32c(const char* data, size_t count) {
   return Extend(0, reinterpret_cast<const uint8_t*>(data), count);
 }
 
-// Computes the CRC32C of the string's content.
-inline uint32_t Crc32c(const std::string& string) {
-  return Crc32c(reinterpret_cast<const uint8_t*>(string.data()),
-                string.size());
-}
-
 }  // namespace crc32c
 
-#if __cplusplus > 201402L
-#if __has_include(<string_view>)
-#include <string_view>
+#if __cplusplus > 201402L && __has_include(<string_view>)
 
+#include <string_view>
 namespace crc32c {
 
 // Computes the CRC32C of the bytes in the string_view.
-inline uint32_t Crc32c(const std::string_view& string_view) {
+inline uint32_t Crc32c(std::string_view string_view) {
   return Crc32c(reinterpret_cast<const uint8_t*>(string_view.data()),
                 string_view.size());
 }
 
 }  // namespace crc32c
 
-#endif  // __has_include(<string_view>)
-#endif  // __cplusplus > 201402L
+#else
+
+#include <string>
+
+namespace crc32c {
+
+// Computes the CRC32C of the string's content.
+inline uint32_t Crc32c(const std::string& string) {
+  return Crc32c(reinterpret_cast<const uint8_t*>(string.data()), string.size());
+}
+
+}  // namespace crc32c
+
+#endif  // __cplusplus > 201402L && __has_include(<string_view>)
 
 #endif  /* defined(__cplusplus) */
 
