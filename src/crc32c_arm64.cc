@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #include "./crc32c_internal.h"
 #include "crc32c/crc32c_config.h"
@@ -24,17 +25,31 @@
 #define KBYTES 1032
 #define SEGMENTBYTES 256
 
+static uint64_t LoadU64(const uint8_t in[sizeof(uint64_t)]) {
+  uint64_t ret;
+  memcpy(&ret, in, sizeof(uint64_t));
+  return ret;
+}
+
+static uint32_t LoadU32(const uint8_t in[sizeof(uint32_t)]) {
+  uint32_t ret;
+  memcpy(&ret, in, sizeof(uint32_t));
+  return ret;
+}
+
+static uint16_t LoadU16(const uint8_t in[sizeof(uint16_t)]) {
+  uint16_t ret;
+  memcpy(&ret, in, sizeof(uint16_t));
+  return ret;
+}
+
 // compute 8bytes for each segment parallelly
-#define CRC32C32BYTES(P, IND)                                             \
-  do {                                                                    \
-    crc1 = __crc32cd(                                                     \
-        crc1, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 1 + (IND))); \
-    crc2 = __crc32cd(                                                     \
-        crc2, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 2 + (IND))); \
-    crc3 = __crc32cd(                                                     \
-        crc3, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 3 + (IND))); \
-    crc0 = __crc32cd(                                                     \
-        crc0, *((const uint64_t *)(P) + (SEGMENTBYTES / 8) * 0 + (IND))); \
+#define CRC32C32BYTES(P, IND)                                          \
+  do {                                                                 \
+    crc1 = __crc32cd(crc1, LoadU64((P) + SEGMENTBYTES * 1 + (IND)*8)); \
+    crc2 = __crc32cd(crc2, LoadU64((P) + SEGMENTBYTES * 2 + (IND)*8)); \
+    crc3 = __crc32cd(crc3, LoadU64((P) + SEGMENTBYTES * 3 + (IND)*8)); \
+    crc0 = __crc32cd(crc0, LoadU64((P) + SEGMENTBYTES * 0 + (IND)*8)); \
   } while (0);
 
 // compute 8*8 bytes for each segment parallelly
@@ -86,7 +101,7 @@ uint32_t ExtendArm64(uint32_t crc, const uint8_t *data, size_t size) {
     t2 = (uint64_t)vmull_p64(crc2, k2);
     t1 = (uint64_t)vmull_p64(crc1, k1);
     t0 = (uint64_t)vmull_p64(crc0, k0);
-    crc = __crc32cd(crc3, *(uint64_t *)data);
+    crc = __crc32cd(crc3, LoadU64(data));
     data += sizeof(uint64_t);
     crc ^= __crc32cd(0, t2);
     crc ^= __crc32cd(0, t1);
@@ -96,18 +111,18 @@ uint32_t ExtendArm64(uint32_t crc, const uint8_t *data, size_t size) {
   }
 
   while (length >= 8) {
-    crc = __crc32cd(crc, *(uint64_t *)data);
+    crc = __crc32cd(crc, LoadU64(data));
     data += 8;
     length -= 8;
   }
 
   if (length & 4) {
-    crc = __crc32cw(crc, *(uint32_t *)data);
+    crc = __crc32cw(crc, LoadU32(data));
     data += 4;
   }
 
   if (length & 2) {
-    crc = __crc32ch(crc, *(uint16_t *)data);
+    crc = __crc32ch(crc, LoadU16(data));
     data += 2;
   }
 
