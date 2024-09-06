@@ -59,12 +59,12 @@ inline uint32_t Crc32c(const char* data, size_t count) {
   return Extend(0, reinterpret_cast<const uint8_t*>(data), count);
 }
 
-#ifdef __cpp_lib_byte
+#if defined(__cpp_lib_byte)
 // Computes the CRC32C of "count" bytes in the buffer pointed by "data".
 inline uint32_t Crc32c(const std::byte* data, size_t count) {
   return Extend(0, reinterpret_cast<const uint8_t*>(data), count);
 }
-#endif
+#endif // defined(__cpp_lib_byte)
 
 // Computes the CRC32C of the string's content.
 inline uint32_t Crc32c(const std::string& string) {
