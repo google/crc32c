@@ -215,8 +215,6 @@ configure_file(
   "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
 )
 
-include_directories("${PROJECT_BINARY_DIR}/include")
-
 # ARM64 CRC32C code is built separately, so we don't accidentally compile
 # unsupported instructions into code that gets run without ARM32 support.
 add_library(crc32c_arm64 OBJECT "")
@@ -289,6 +287,7 @@ target_sources(crc32c
 
 target_include_directories(crc32c
   PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
