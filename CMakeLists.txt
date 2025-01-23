@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.10)
 project(Crc32c VERSION 1.1.0 LANGUAGES C CXX)
 
 # C standard can be overridden when this is used as a sub-project.
