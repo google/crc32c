@@ -11,7 +11,7 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 11)
   set(CMAKE_C_STANDARD_REQUIRED OFF)
   set(CMAKE_C_EXTENSIONS OFF)
-endif(NOT CMAKE_C_STANDARD)
+endif()
 
 # C++ standard can be overridden when this is used as a sub-project.
 if(NOT CMAKE_CXX_STANDARD)
@@ -19,7 +19,7 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF)
-endif(NOT CMAKE_CXX_STANDARD)
+endif()
 
 # https://github.com/izenecloud/cmake/blob/master/SetCompilerWarningAll.cmake
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -27,9 +27,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_CXX_WARNING_LEVEL 4)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
     string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+  else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+  endif()
 
   # Disable C++ exceptions.
   string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -39,21 +39,21 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # Disable RTTI.
   string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
-else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+else()
   # Use -Wall for clang and gcc.
   if(NOT CMAKE_CXX_FLAGS MATCHES "-Wall")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wall")
+  endif()
 
   # Use -Wextra for clang and gcc.
   if(NOT CMAKE_CXX_FLAGS MATCHES "-Wextra")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
-  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Wextra")
+  endif()
 
   # Use -Werror for clang and gcc.
   if(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-  endif(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
+  endif()
 
   # Disable C++ exceptions.
   string(REGEX REPLACE "-fexceptions" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -62,7 +62,7 @@ else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # Disable RTTI.
   string(REGEX REPLACE "-frtti" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+endif()
 
 option(CRC32C_BUILD_TESTS "Build CRC32C's unit tests" ON)
 option(CRC32C_BUILD_BENCHMARKS "Build CRC32C's benchmarks" ON)
@@ -115,9 +115,9 @@ int main() {
 set(OLD_CMAKE_REQURED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} /arch:AVX")
-else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+else()
   set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -msse4.2")
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+endif()
 check_cxx_source_compiles("
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -194,21 +194,21 @@ if(CRC32C_USE_GLOG)
   # https://github.com/google/glog/issues/185
   if(CRC32C_HAVE_NO_DEPRECATED)
     set_property(TARGET glog APPEND PROPERTY COMPILE_OPTIONS -Wno-deprecated)
-  endif(CRC32C_HAVE_NO_DEPRECATED)
+  endif()
 
   # glog triggers sign comparison warnings on gcc.
   if(CRC32C_HAVE_NO_SIGN_COMPARE)
     set_property(TARGET glog APPEND PROPERTY COMPILE_OPTIONS -Wno-sign-compare)
-  endif(CRC32C_HAVE_NO_SIGN_COMPARE)
+  endif()
 
   # glog triggers unused parameter warnings on clang.
   if(CRC32C_HAVE_NO_UNUSED_PARAMETER)
     set_property(TARGET glog
                  APPEND PROPERTY COMPILE_OPTIONS -Wno-unused-parameter)
-  endif(CRC32C_HAVE_NO_UNUSED_PARAMETER)
+  endif()
 
   set(CRC32C_TESTS_BUILT_WITH_GLOG 1)
-endif(CRC32C_USE_GLOG)
+endif()
 
 configure_file(
   "src/crc32c_config.h.in"
@@ -230,15 +230,15 @@ if(HAVE_ARM64_CRC32C)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # TODO(pwnall): Insert correct flag when VS gets ARM64 CRC32C support.
     target_compile_options(crc32c_arm64 PRIVATE "/arch:NOTYET")
-  else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  else()
     target_compile_options(crc32c_arm64 PRIVATE "-march=armv8-a+crc+crypto")
-  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-endif(HAVE_ARM64_CRC32C)
+  endif()
+endif()
 
 # CMake only enables PIC by default in SHARED and MODULE targets.
 if(BUILD_SHARED_LIBS)
   set_property(TARGET crc32c_arm64 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-endif(BUILD_SHARED_LIBS)
+endif()
 
 # SSE4.2 code is built separately, so we don't accidentally compile unsupported
 # instructions into code that gets run without SSE4.2 support.
@@ -252,15 +252,15 @@ target_sources(crc32c_sse42
 if(HAVE_SSE42)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(crc32c_sse42 PRIVATE "/arch:AVX")
-  else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  else()
     target_compile_options(crc32c_sse42 PRIVATE "-msse4.2")
-  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-endif(HAVE_SSE42)
+  endif()
+endif()
 
 # CMake only enables PIC by default in SHARED and MODULE targets.
 if(BUILD_SHARED_LIBS)
   set_property(TARGET crc32c_sse42 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-endif(BUILD_SHARED_LIBS)
+endif()
 
 # Must be included before CMAKE_INSTALL_INCLUDEDIR is used.
 include(GNUInstallDirs)
@@ -304,7 +304,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set_property(TARGET crc32c APPEND PROPERTY COMPILE_OPTIONS "/WX")
   set_property(TARGET crc32c_arm64 APPEND PROPERTY COMPILE_OPTIONS "/WX")
   set_property(TARGET crc32c_sse42 APPEND PROPERTY COMPILE_OPTIONS "/WX")
-endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+endif()
 
 if(CRC32C_BUILD_TESTS)
   enable_testing()
@@ -323,7 +323,7 @@ if(CRC32C_BUILD_TESTS)
         APPEND PROPERTY COMPILE_OPTIONS -Wno-missing-field-initializers)
     set_property(TARGET gmock
         APPEND PROPERTY COMPILE_OPTIONS -Wno-missing-field-initializers)
-  endif(CRC32C_HAVE_NO_MISSING_FIELD_INITIALIZERS)
+  endif()
 
   add_executable(crc32c_tests "")
   target_sources(crc32c_tests
@@ -344,11 +344,11 @@ if(CRC32C_BUILD_TESTS)
   # Warnings as errors in Visual Studio for this project's targets.
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set_property(TARGET crc32c_tests APPEND PROPERTY COMPILE_OPTIONS "/WX")
-  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  endif()
 
   if(CRC32C_USE_GLOG)
     target_link_libraries(crc32c_tests glog)
-  endif(CRC32C_USE_GLOG)
+  endif()
 
   add_test(NAME crc32c_tests COMMAND crc32c_tests)
 
@@ -368,10 +368,10 @@ if(CRC32C_BUILD_TESTS)
     # workaround can be removed once the Windows SDK on our CI is upgraded.
     set_property(TARGET crc32c_capi_tests
         APPEND PROPERTY COMPILE_OPTIONS "/wd5105")
-  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  endif()
 
   add_test(NAME crc32c_capi_tests COMMAND crc32c_capi_tests)
-endif(CRC32C_BUILD_TESTS)
+endif()
 
 if(CRC32C_BUILD_BENCHMARKS)
   add_executable(crc32c_bench "")
@@ -390,13 +390,13 @@ if(CRC32C_BUILD_BENCHMARKS)
 
   if(CRC32C_USE_GLOG)
     target_link_libraries(crc32c_bench glog)
-  endif(CRC32C_USE_GLOG)
+  endif()
 
   # Warnings as errors in Visual Studio for this project's targets.
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set_property(TARGET crc32c_bench APPEND PROPERTY COMPILE_OPTIONS "/WX")
-  endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-endif(CRC32C_BUILD_BENCHMARKS)
+  endif()
+endif()
 
 if(CRC32C_INSTALL)
   install(TARGETS crc32c
@@ -432,4 +432,4 @@ if(CRC32C_INSTALL)
       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   )
-endif(CRC32C_INSTALL)
+endif()
