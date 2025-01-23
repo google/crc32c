@@ -215,75 +215,47 @@ configure_file(
   "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
 )
 
-# ARM64 CRC32C code is built separately, so we don't accidentally compile
-# unsupported instructions into code that gets run without ARM32 support.
-add_library(crc32c_arm64 OBJECT "")
-target_sources(crc32c_arm64
-  PRIVATE
-    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "src/crc32c_arm64.cc"
-    "src/crc32c_arm64.h"
+add_library(crc32c
+  "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
+  "include/crc32c/crc32c.h"
+  "src/crc32c_arm64.cc"
+  "src/crc32c_arm64_check.h"
+  "src/crc32c_arm64.h"
+  "src/crc32c.cc"
+  "src/crc32c_internal.h"
+  "src/crc32c_portable.cc"
+  "src/crc32c_prefetch.h"
+  "src/crc32c_read_le.h"
+  "src/crc32c_round_up.h"
+  "src/crc32c_sse42.cc"
+  "src/crc32c_sse42_check.h"
+  "src/crc32c_sse42.h"
 )
+
 if(HAVE_ARM64_CRC32C)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # TODO(pwnall): Insert correct flag when VS gets ARM64 CRC32C support.
-    target_compile_options(crc32c_arm64 PRIVATE "/arch:NOTYET")
+    set_property(SOURCE "src/crc32c_arm64.cc" PROPERTY
+      COMPILE_OPTIONS "/arch:NOTYET"
+    )
   else()
-    target_compile_options(crc32c_arm64 PRIVATE "-march=armv8-a+crc+crypto")
+    set_property(SOURCE "src/crc32c_arm64.cc" PROPERTY
+      COMPILE_OPTIONS "-march=armv8-a+crc+crypto"
+    )
   endif()
 endif()
 
-# CMake only enables PIC by default in SHARED and MODULE targets.
-if(BUILD_SHARED_LIBS)
-  set_property(TARGET crc32c_arm64 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-endif()
-
-# SSE4.2 code is built separately, so we don't accidentally compile unsupported
-# instructions into code that gets run without SSE4.2 support.
-add_library(crc32c_sse42 OBJECT "")
-target_sources(crc32c_sse42
-  PRIVATE
-    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "src/crc32c_sse42.cc"
-    "src/crc32c_sse42.h"
-)
 if(HAVE_SSE42)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(crc32c_sse42 PRIVATE "/arch:AVX")
+    set_property(SOURCE "src/crc32c_sse42.cc" PROPERTY
+      COMPILE_OPTIONS "/arch:AVX"
+    )
   else()
-    target_compile_options(crc32c_sse42 PRIVATE "-msse4.2")
+    set_property(SOURCE "src/crc32c_sse42.cc" PROPERTY
+      COMPILE_OPTIONS "-msse4.2"
+    )
   endif()
 endif()
-
-# CMake only enables PIC by default in SHARED and MODULE targets.
-if(BUILD_SHARED_LIBS)
-  set_property(TARGET crc32c_sse42 PROPERTY POSITION_INDEPENDENT_CODE TRUE)
-endif()
-
-add_library(crc32c ""
-  # TODO(pwnall): Move the TARGET_OBJECTS generator expressions to the PRIVATE
-  # section of target_sources when cmake_minimum_required becomes 3.9 or above.
-  $<TARGET_OBJECTS:crc32c_arm64>
-  $<TARGET_OBJECTS:crc32c_sse42>
-)
-target_sources(crc32c
-  PRIVATE
-    "${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h"
-    "src/crc32c_arm64.h"
-    "src/crc32c_arm64_check.h"
-    "src/crc32c_internal.h"
-    "src/crc32c_portable.cc"
-    "src/crc32c_prefetch.h"
-    "src/crc32c_read_le.h"
-    "src/crc32c_round_up.h"
-    "src/crc32c_sse42.h"
-    "src/crc32c_sse42_check.h"
-    "src/crc32c.cc"
-
-  # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
-  $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
-    "include/crc32c/crc32c.h"
-)
 
 target_include_directories(crc32c
   PUBLIC
@@ -297,8 +269,6 @@ set_target_properties(crc32c
 # Warnings as errors in Visual Studio for this project's targets.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set_property(TARGET crc32c APPEND PROPERTY COMPILE_OPTIONS "/WX")
-  set_property(TARGET crc32c_arm64 APPEND PROPERTY COMPILE_OPTIONS "/WX")
-  set_property(TARGET crc32c_sse42 APPEND PROPERTY COMPILE_OPTIONS "/WX")
 endif()
 
 if(CRC32C_BUILD_TESTS)
