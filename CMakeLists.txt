@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5..4.0)
 project(Crc32c VERSION 1.1.0 LANGUAGES C CXX)
 
 # C standard can be overridden when this is used as a sub-project.
@@ -265,7 +265,7 @@ endif(BUILD_SHARED_LIBS)
 # Must be included before CMAKE_INSTALL_INCLUDEDIR is used.
 include(GNUInstallDirs)
 
-add_library(crc32c ""
+add_library(crc32c STATIC
   # TODO(pwnall): Move the TARGET_OBJECTS generator expressions to the PRIVATE
   # section of target_sources when cmake_minimum_required becomes 3.9 or above.
   $<TARGET_OBJECTS:crc32c_arm64>
