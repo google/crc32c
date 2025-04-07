@@ -37,7 +37,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_definitions(-D_HAS_EXCEPTIONS=0)
 
   # Disable RTTI.
-  string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  string(REGEX REPLACE "/GR-*" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
 else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # Use -Wall for clang and gcc.
