@@ -149,8 +149,12 @@ check_cxx_source_compiles("
 #include <arm_neon.h>
 
 int main() {
+#ifdef __aarch64__
   __crc32cb(0, 0); __crc32ch(0, 0); __crc32cw(0, 0); __crc32cd(0, 0);
   vmull_p64(0, 0);
+#else
+#error CRC32C library does not support hardware acceleration on ARM 32-bit
+#endif
   return 0;
 }
 " HAVE_ARM64_CRC32C)
