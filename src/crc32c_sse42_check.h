@@ -12,7 +12,8 @@
 
 #include "crc32c/crc32c_config.h"
 
-#if HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
+#if HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__)) && \
+    (defined(__SSE4_2__) || defined(__AVX__))
 
 // If the compiler supports SSE4.2, it definitely supports X86.
 
@@ -43,6 +44,7 @@ inline bool CanUseSse42() {
 
 #endif  // defined(_MSC_VER)
 
-#endif  // HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
+#endif  // HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__)) &&
+        // (defined(__SSE4_2__) || defined(__AVX__))
 
 #endif  // CRC32C_CRC32C_SSE42_CHECK_H_

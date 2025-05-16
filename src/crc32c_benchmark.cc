@@ -5,9 +5,8 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "crc32c/crc32c_config.h"
-
 #include "benchmark/benchmark.h"
+#include "crc32c/crc32c_config.h"
 
 #if CRC32C_TESTS_BUILT_WITH_GLOG
 #include "glog/logging.h"
@@ -36,8 +35,7 @@ class CRC32CBenchmark : public benchmark::Fixture {
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Public)(benchmark::State& state) {
   uint32_t crc = 0;
-  for (auto _ : state)
-    crc = crc32c::Extend(crc, block_buffer_, block_size_);
+  for (auto _ : state) crc = crc32c::Extend(crc, block_buffer_, block_size_);
   state.SetBytesProcessed(state.iterations() * block_size_);
 }
 BENCHMARK_REGISTER_F(CRC32CBenchmark, Public)
@@ -73,7 +71,8 @@ BENCHMARK_REGISTER_F(CRC32CBenchmark, ArmCRC32C)
 
 #endif  // HAVE_ARM64_CRC32C
 
-#if HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
+#if HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__)) && \
+    (defined(__SSE4_2__) || defined(__AVX__))
 
 BENCHMARK_DEFINE_F(CRC32CBenchmark, Sse42)(benchmark::State& state) {
   if (!crc32c::CanUseSse42()) {
@@ -90,7 +89,8 @@ BENCHMARK_REGISTER_F(CRC32CBenchmark, Sse42)
     ->RangeMultiplier(16)
     ->Range(256, 16777216);  // Block size.
 
-#endif  // HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__))
+#endif  // HAVE_SSE42 && (defined(_M_X64) || defined(__x86_64__)) &&
+        // (defined(__SSE4_2__) || defined(__AVX__))
 
 int main(int argc, char** argv) {
 #if CRC32C_TESTS_BUILT_WITH_GLOG
